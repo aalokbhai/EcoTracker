@@ -22,12 +22,13 @@
                     <tr>
                         <td class="fw-semibold">#{{ p.id }}</td>
                         <td>{% t p.get_waste_type_display %}</td>
-                        <td>{{ p.address }}</td>
+                        <td>{{ p.full_address }}</td>
                         <td>{{ p.preferred_date|date:"d M Y" }}</td>
                         <td>{% include 'partials/badge.html' with s=p.status %}</td>
-                        <td class="text-end">
+                        <td class="text-end text-nowrap">
+                            <a href="{% url 'pickup_detail' p.pk %}" class="btn btn-sm btn-outline-brand">{% t "Track" %}</a>
                             {% if p.status == 'pending' %}
-                            <form method="post" action="{% url 'cancel_pickup' p.pk %}">
+                            <form method="post" action="{% url 'task_cancel' 'pickup' p.pk %}" class="d-inline" onsubmit="return confirm('{% t 'Cancel this request?' %}');">
                                 {% csrf_token %}
                                 <button class="btn btn-sm btn-outline-danger">{% t "Cancel" %}</button>
                             </form>

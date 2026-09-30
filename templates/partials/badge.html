@@ -1,8 +1,9 @@
 {% load eco_tags %}
 {% if s == 'pending' %}<span class="badge-soft b-warning"><i class="bi bi-hourglass-split"></i> {% t "Pending" %}</span>
-{% elif s == 'in_progress' %}<span class="badge-soft b-info"><i class="bi bi-gear-fill"></i> {% t "In Progress" %}</span>
+{% elif s == 'approved' %}<span class="badge-soft b-info"><i class="bi bi-patch-check-fill"></i> {% t "Approved" %}</span>
+{% elif s == 'in_progress' %}<span class="badge-soft b-info"><i class="bi bi-truck"></i> {% t "In Progress" %}</span>
+{% elif s == 'cleaned' %}<span class="badge-soft b-violet"><i class="bi bi-camera-fill"></i> {% t "Awaiting Verification" %}</span>
 {% elif s == 'resolved' %}<span class="badge-soft b-success"><i class="bi bi-check-circle-fill"></i> {% t "Resolved" %}</span>
-{% elif s == 'scheduled' %}<span class="badge-soft b-info"><i class="bi bi-calendar-check"></i> {% t "Scheduled" %}</span>
-{% elif s == 'completed' %}<span class="badge-soft b-success"><i class="bi bi-check-circle-fill"></i> {% t "Completed" %}</span>
+{% elif s == 'rejected' %}<span class="badge-soft b-danger"><i class="bi bi-x-octagon-fill"></i> {% t "Rejected" %}</span>
 {% elif s == 'cancelled' %}<span class="badge-soft b-muted"><i class="bi bi-x-circle"></i> {% t "Cancelled" %}</span>
 {% endif %}

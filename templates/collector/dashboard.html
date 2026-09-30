@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load eco_tags %}
+{% block title %}{% t "Collector Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h1 class="page-title">{% t "Collector Dashboard" %}</h1>
+        <p class="page-sub mb-0">{% t "Welcome" %}, {{ user.get_full_name|default:user.username }}{% if user.profile.city %} · {{ user.profile.city }}{% endif %}</p>
+    </div>
+
+    {% if not approved %}
+    <div class="card-x p-5 text-center">
+        <i class="bi bi-hourglass-split display-5 text-warning"></i>
+        <h4 class="fw-bold mt-3">{% t "Waiting for MC office approval" %}</h4>
+        <p class="text-muted mb-0">{% t "Your collector account was created. You will get tasks as soon as the Municipal Corporation office approves it." %}</p>
+    </div>
+    {% else %}
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3"><div class="card-x stat-card">
+            <div class="stat-icon ic-green"><i class="bi bi-check-circle-fill"></i></div>
+            <div><div class="stat-num" data-count="{{ stats.cleaned }}">0</div><div class="stat-label">{% t "Cleaned (verified)" %}</div></div>
+        </div></div>
+        <div class="col-6 col-lg-3"><div class="card-x stat-card">
+            <div class="stat-icon ic-amber"><i class="bi bi-exclamation-circle-fill"></i></div>
+            <div><div class="stat-num" data-count="{{ stats.not_cleaned }}">0</div><div class="stat-label">{% t "Not cleaned yet" %}</div></div>
+        </div></div>
+        <div class="col-6 col-lg-3"><div class="card-x stat-card">
+            <div class="stat-icon ic-violet"><i class="bi bi-camera-fill"></i></div>
+            <div><div class="stat-num" data-count="{{ stats.awaiting }}">0</div><div class="stat-label">{% t "Awaiting verification" %}</div></div>
+        </div></div>
+        <div class="col-6 col-lg-3"><div class="card-x stat-card">
+            <div class="stat-icon ic-red"><i class="bi bi-arrow-repeat"></i></div>
+            <div><div class="stat-num" data-count="{{ stats.redo }}">0</div><div class="stat-label">{% t "Sent back to redo" %}</div></div>
+        </div></div>
+    </div>
+
+    <div class="card-x p-4 mb-4">
+        <div class="d-flex justify-content-between mb-2">
+            <span class="fw-semibold">{% t "Your completion rate" %} <span class="text-muted small">({{ stats.cleaned }} / {{ stats.total }})</span></span>
+            <span class="fw-bold text-brand">{{ stats.rate }}%</span>
+        </div>
+        <div class="progress" style="height: 10px;"><div class="progress-bar bg-success" style="width: {{ stats.rate }}%"></div></div>
+    </div>
+
+    <ul class="nav nav-pills nav-pills-eco mb-3">
+        {% for key, label, n in tabs %}
+        <li class="nav-item"><a class="nav-link {% if tab == key %}active{% endif %}" href="?tab={{ key }}">{% t label %} <span class="tab-count">{{ n }}</span></a></li>
+        {% endfor %}
+    </ul>
+
+    <div class="card-x overflow-hidden">
+        {% if tasks %}
+        <div class="table-responsive">
+            <table class="table table-eco">
+                <thead><tr><th>{% t "Photo" %}</th><th>{% t "Task" %}</th><th>{% t "Address (tap for directions)" %}</th><th>{% t "Status" %}</th><th></th></tr></thead>
+                <tbody>
+                {% for o in tasks %}
+                    <tr>
+                        <td>{% if o.before_image %}<img src="{{ o.before_image.url }}" class="thumb" alt="">{% endif %}</td>
+                        <td>
+                            <span class="kind-chip {{ o.kind }}">{% t o.kind_label %}</span> <a href="{{ o.get_absolute_url }}" class="fw-semibold">#{{ o.id }}</a>
+                            <div class="small text-muted">{% t o.title %}</div>
+                            {% if o.status == 'in_progress' and o.redo_reason %}<div class="small text-danger"><i class="bi bi-arrow-repeat"></i> {% t "Redo" %}: {{ o.redo_reason|truncatechars:60 }}</div>{% endif %}
+                        </td>
+                        <td style="max-width:320px">
+                            <a href="{{ o.maps_directions_url }}" target="_blank" rel="noopener" class="addr-link"><i class="bi bi-geo-alt-fill"></i> {{ o.full_address }}</a>
+                        </td>
+                        <td>{% include 'partials/badge.html' with s=o.status %}</td>
+                        <td class="text-end text-nowrap">
+                            <a href="{{ o.maps_directions_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-brand" title="{% t 'Get directions' %}"><i class="bi bi-sign-turn-right"></i></a>
+                            <a href="{{ o.get_absolute_url }}" class="btn btn-sm btn-brand">
+                                {% if o.status == 'approved' and not o.collector_id %}{% t "View & accept" %}{% elif o.status == 'approved' or o.status == 'in_progress' %}{% t "Open & clean" %}{% else %}{% t "Open" %}{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p class="mt-2 mb-0">{% if tab == 'available' %}{% t "No new tasks are available in your city right now." %}{% else %}{% t "Nothing here yet." %}{% endif %}</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

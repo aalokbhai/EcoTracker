@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load eco_tags %}
+{% block title %}{% t "Garbage Collectors" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-3">
+        <h1 class="page-title">{% t "Garbage Collectors" %}</h1>
+        <p class="page-sub">{% t "Approve new collector accounts and see how much each collector has cleaned." %}</p>
+    </div>
+    {% include 'partials/manage_tabs.html' %}
+
+    <div class="card-x overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-eco">
+                <thead><tr><th>{% t "Collector" %}</th><th>{% t "Phone" %}</th><th>{% t "City" %}</th><th>{% t "Cleaned" %}</th><th>{% t "Not cleaned yet" %}</th><th>{% t "Awaiting verification" %}</th><th>{% t "Account" %}</th><th></th></tr></thead>
+                <tbody>
+                {% for r in rows %}
+                    <tr>
+                        <td><div class="fw-semibold">{{ r.user.get_full_name|default:r.user.username }}</div><div class="small text-muted">@{{ r.user.username }}</div></td>
+                        <td>{{ r.user.profile.phone|default:"-" }}</td>
+                        <td>{{ r.user.profile.city|default:"-" }}</td>
+                        <td><span class="badge-soft b-success">{{ r.stats.cleaned }}</span></td>
+                        <td><span class="badge-soft b-warning">{{ r.stats.not_cleaned }}</span></td>
+                        <td><span class="badge-soft b-violet">{{ r.stats.awaiting }}</span></td>
+                        <td>{% if r.user.profile.is_approved %}<span class="badge-soft b-success">{% t "Approved" %}</span>{% else %}<span class="badge-soft b-warning">{% t "Waiting for approval" %}</span>{% endif %}</td>
+                        <td class="text-end">
+                            <form method="post" action="{% url 'set_collector_approval' r.user.pk %}">
+                                {% csrf_token %}
+                                {% if r.user.profile.is_approved %}
+                                <input type="hidden" name="approve" value="0">
+                                <button class="btn btn-sm btn-outline-danger">{% t "Suspend" %}</button>
+                                {% else %}
+                                <input type="hidden" name="approve" value="1">
+                                <button class="btn btn-sm btn-brand">{% t "Approve" %}</button>
+                                {% endif %}
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8"><div class="empty-state"><i class="bi bi-person-badge"></i><p class="mt-2 mb-0">{% t "No collectors have registered yet." %}</p></div></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

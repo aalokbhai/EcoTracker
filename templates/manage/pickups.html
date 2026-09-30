@@ -6,37 +6,46 @@
 <div class="container py-5">
     <div class="mb-3">
         <h1 class="page-title">{% t "Manage Pickup Requests" %}</h1>
-        <p class="page-sub">{% t "Schedule and complete waste pickups." %}</p>
+        <p class="page-sub">{% t "Approve pickups, assign collectors and verify the cleaning." %}</p>
     </div>
     {% include 'partials/manage_tabs.html' %}
+
+    <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+        <a href="?status=pending" class="chip {% if f.status == 'pending' %}on{% endif %}"><i class="bi bi-hourglass-split"></i> {% t "Needs review" %} <b>{{ count_pending }}</b></a>
+        <a href="?status=cleaned" class="chip {% if f.status == 'cleaned' %}on{% endif %}"><i class="bi bi-camera"></i> {% t "Awaiting verification" %} <b>{{ count_verify }}</b></a>
+        <a href="{% url 'manage_pickups' %}" class="chip {% if not f.status %}on{% endif %}">{% t "All" %}</a>
+        <form method="get" class="ms-auto">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">{% t "All statuses" %}</option>
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if f.status == value %}selected{% endif %}>{% t label %}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
 
     <div class="card-x overflow-hidden">
         <div class="table-responsive">
             <table class="table table-eco">
-                <thead><tr><th>{% t "ID" %}</th><th>{% t "User" %}</th><th>{% t "Waste type" %}</th><th>{% t "Address" %}</th><th>{% t "Date" %}</th><th>{% t "Status" %}</th><th style="min-width:230px">{% t "Update" %}</th></tr></thead>
+                <thead><tr><th>{% t "ID" %}</th><th>{% t "User" %}</th><th>{% t "Waste type" %}</th><th>{% t "Address" %}</th><th>{% t "Date" %}</th><th>{% t "Status" %}</th><th>{% t "Collector" %}</th><th></th></tr></thead>
                 <tbody>
                 {% for p in pickups %}
                     <tr>
-                        <td class="fw-semibold">#{{ p.id }}</td>
+                        <td class="fw-semibold"><a href="{{ p.get_absolute_url }}">#{{ p.id }}</a></td>
                         <td>{{ p.user.username }}</td>
                         <td>{% t p.get_waste_type_display %}</td>
-                        <td>{{ p.address }}</td>
+                        <td class="small" style="max-width:280px">{{ p.full_address }}</td>
                         <td>{{ p.preferred_date|date:"d M Y" }}</td>
                         <td>{% include 'partials/badge.html' with s=p.status %}</td>
-                        <td>
-                            <form method="post" action="{% url 'update_pickup' p.pk %}" class="d-flex gap-1">
-                                {% csrf_token %}
-                                <select name="status" class="form-select form-select-sm" style="width:150px">
-                                    {% for value, label in status_choices %}
-                                    <option value="{{ value }}" {% if p.status == value %}selected{% endif %}>{% t label %}</option>
-                                    {% endfor %}
-                                </select>
-                                <button class="btn btn-sm btn-brand">{% t "Save" %}</button>
-                            </form>
+                        <td class="small">{% if p.collector %}{{ p.collector.get_full_name|default:p.collector.username }}{% else %}-{% endif %}</td>
+                        <td class="text-end">
+                            <a href="{{ p.get_absolute_url }}" class="btn btn-sm {% if p.status == 'pending' or p.status == 'cleaned' %}btn-brand{% else %}btn-outline-brand{% endif %}">
+                                {% if p.status == 'pending' %}{% t "Review" %}{% elif p.status == 'cleaned' %}{% t "Verify" %}{% else %}{% t "Open" %}{% endif %}
+                            </a>
                         </td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="7"><div class="empty-state"><i class="bi bi-truck"></i><p class="mt-2 mb-0">{% t "No pickup requests yet" %}</p></div></td></tr>
+                    <tr><td colspan="8"><div class="empty-state"><i class="bi bi-truck"></i><p class="mt-2 mb-0">{% t "No pickup requests yet" %}</p></div></td></tr>
                 {% endfor %}
                 </tbody>
             </table>

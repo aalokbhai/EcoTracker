@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load eco_tags %}
+{% block title %}{% t "Pickup" %} #{{ obj.id }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% if is_officer %}<a href="{% url 'manage_pickups' %}" class="link-brand small"><i class="bi bi-arrow-left"></i> {% t "Back to pickups" %}</a>
+    {% elif is_collector %}<a href="{% url 'collector_dashboard' %}" class="link-brand small"><i class="bi bi-arrow-left"></i> {% t "Back to my tasks" %}</a>
+    {% else %}<a href="{% url 'my_pickups' %}" class="link-brand small"><i class="bi bi-arrow-left"></i> {% t "Back to pickups" %}</a>{% endif %}
+    <div class="d-flex flex-wrap justify-content-between align-items-center mt-2 mb-4 gap-2">
+        <h1 class="page-title mb-0">{% t "Pickup" %} #{{ obj.id }}</h1>
+        {% include 'partials/badge.html' with s=obj.status %}
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card-x p-4">
+                {% include 'partials/task_photos.html' %}
+                <div class="detail-row"><div class="k">{% t "Waste type" %}</div><div class="fw-semibold">{% t obj.get_waste_type_display %}</div></div>
+                <div class="detail-row"><div class="k">{% t "Area" %}</div><div>{{ obj.area|default:"-" }}</div></div>
+                {% include 'partials/task_address.html' %}
+                <div class="detail-row"><div class="k">{% t "Preferred date" %}</div><div>{{ obj.preferred_date|date:"d M Y" }}</div></div>
+                {% if obj.notes %}<div class="detail-row"><div class="k">{% t "Notes" %}</div><div>{{ obj.notes }}</div></div>{% endif %}
+                <div class="detail-row"><div class="k">{% t "Requested on" %}</div><div>{{ obj.created_at|date:"d M Y, h:i A" }}</div></div>
+                <div class="detail-row"><div class="k">{% t "Requested by" %}</div><div>{{ obj.user.get_full_name|default:obj.user.username }}{% if is_officer or is_collector %}{% if obj.user.profile.phone %} · <a href="tel:{{ obj.user.profile.phone }}">{{ obj.user.profile.phone }}</a>{% endif %}{% endif %}</div></div>
+                {% if obj.collector %}<div class="detail-row"><div class="k">{% t "Collector" %}</div><div>{{ obj.collector.get_full_name|default:obj.collector.username }}</div></div>{% endif %}
+                {% if obj.collector_note %}<div class="detail-row"><div class="k">{% t "Collector note" %}</div><div>{{ obj.collector_note }}</div></div>{% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            {% include 'partials/task_actions.html' %}
+            {% include 'partials/task_progress.html' %}
+            {% include 'partials/task_history.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -19,6 +19,11 @@
                         <div class="col-md-6">{% include 'partials/field.html' with field=form.area %}</div>
                     </div>
                     {% include 'partials/field.html' with field=form.address %}
+                    <div class="row">
+                        <div class="col-md-4">{% include 'partials/field.html' with field=form.city %}</div>
+                        <div class="col-md-4">{% include 'partials/field.html' with field=form.state %}</div>
+                        <div class="col-md-4">{% include 'partials/field.html' with field=form.pincode %}</div>
+                    </div>
                     {% include 'partials/field.html' with field=form.description %}
 
                     <label class="form-label fw-semibold">{% t "Photo of the issue" %}</label>
@@ -43,7 +48,7 @@
                 <h6 class="fw-bold"><i class="bi bi-lightbulb text-warning me-1"></i> {% t "Tips for a good report" %}</h6>
                 <ul class="text-muted small ps-3 mb-0">
                     <li class="mb-2">{% t "Take the photo in daylight and get close to the waste." %}</li>
-                    <li class="mb-2">{% t "Mention the exact area and a nearby landmark." %}</li>
+                    <li class="mb-2">{% t "Give the full address with city, state and pincode so the collector can find the place on the map." %}</li>
                     <li>{% t "Describe how long the problem has existed." %}</li>
                 </ul>
             </div>

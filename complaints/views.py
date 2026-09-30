@@ -1,14 +1,17 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+
 from accounts.i18n import tr
+from accounts.roles import citizen_required
+
+from .ai import verify_image
 from .forms import ComplaintForm
 from .models import Complaint
-from .ai import verify_image
+from .task_views import build_task_context, load_task
 
 
-@login_required
+@citizen_required
 def report_complaint(request):
     if request.method == 'POST':
         form = ComplaintForm(request.POST, request.FILES)
@@ -25,6 +28,7 @@ def report_complaint(request):
                 complaint.save(update_fields=['ai_verified', 'ai_confidence'])
 
             messages.success(request, tr('Complaint #{id} submitted successfully.').format(id=complaint.id))
+            messages.info(request, tr('The MC office will review your complaint shortly.'))
             if complaint.ai_verified is False:
                 messages.warning(
                     request,
@@ -33,11 +37,12 @@ def report_complaint(request):
                 )
             return redirect('complaint_detail', pk=complaint.pk)
     else:
-        form = ComplaintForm()
+        profile = request.user.profile
+        form = ComplaintForm(initial={'city': profile.city, 'state': profile.state, 'pincode': profile.pincode})
     return render(request, 'complaints/report.html', {'form': form})
 
 
-@login_required
+@citizen_required
 def my_complaints(request):
     complaints = Complaint.objects.filter(user=request.user)
     return render(request, 'complaints/my_complaints.html', {'complaints': complaints})
@@ -45,7 +50,5 @@ def my_complaints(request):
 
 @login_required
 def complaint_detail(request, pk):
-    complaint = get_object_or_404(Complaint, pk=pk)
-    if complaint.user != request.user and not request.user.is_staff:
-        raise PermissionDenied
-    return render(request, 'complaints/detail.html', {'complaint': complaint})
+    complaint = load_task(request, 'complaint', pk)
+    return render(request, 'complaints/detail.html', build_task_context(request, complaint))

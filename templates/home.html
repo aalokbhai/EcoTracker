@@ -11,9 +11,13 @@
                 <h1>{% t "Cleaner cities start with a single report." %}</h1>
                 <p class="lead mt-3 mb-4">{% t "Report waste issues with a photo, request pickups and track every complaint from submission to resolution. All in one place." %}</p>
                 <div class="d-flex flex-wrap gap-2">
-                    {% if user.is_authenticated %}
+                    {% if is_citizen %}
                         <a href="{% url 'report_complaint' %}" class="btn btn-light btn-lg text-success"><i class="bi bi-camera me-1"></i> {% t "Report an Issue" %}</a>
                         <a href="{% url 'my_complaints' %}" class="btn btn-outline-light btn-lg">{% t "My Complaints" %}</a>
+                    {% elif is_collector %}
+                        <a href="{% url 'collector_dashboard' %}" class="btn btn-light btn-lg text-success"><i class="bi bi-truck me-1"></i> {% t "My Tasks" %}</a>
+                    {% elif is_officer %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg text-success"><i class="bi bi-speedometer2 me-1"></i> {% t "MC Office" %}</a>
                     {% else %}
                         <a href="{% url 'register' %}" class="btn btn-light btn-lg text-success">{% t "Get Started" %} <i class="bi bi-arrow-right ms-1"></i></a>
                         <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">{% t "Login" %}</a>
@@ -122,6 +126,27 @@
         </div>
     </div>
 </section>
+
+
+{% if testimonials %}
+<section class="mt-5 pt-5">
+    <div class="container text-center mb-4">
+        <div class="eyebrow">{% t "What people say" %}</div>
+        <h2 class="section-title">{% t "Loved by our community" %}</h2>
+    </div>
+    <div class="train" aria-label="{% t 'What people say' %}">
+        <div class="train-track" style="--cards: {{ testimonials|length }}">
+            {% for f in testimonials %}{% include 'partials/testimonial_card.html' %}{% endfor %}
+            <div class="d-contents" aria-hidden="true">
+                {% for f in testimonials %}{% include 'partials/testimonial_card.html' %}{% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'feedback' %}" class="btn btn-outline-brand"><i class="bi bi-chat-heart me-1"></i> {% t "See all feedback" %}</a>
+    </div>
+</section>
+{% endif %}
 
 {% if not user.is_authenticated %}
 <section class="container mt-5">

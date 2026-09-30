@@ -1,0 +1,10 @@
+<div class="train-card">
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <span class="avatar avatar-lg">{{ f.name|slice:":1"|upper }}</span>
+        <div class="min-w-0">
+            <div class="fw-bold text-truncate">{{ f.name }}</div>
+            <div class="stars small">{% include 'partials/stars.html' with n=f.rating %}</div>
+        </div>
+    </div>
+    <p class="train-text mb-0">{{ f.message }}</p>
+</div>

@@ -25,7 +25,7 @@
                         <td>{% if c.image %}<img src="{{ c.image.url }}" class="thumb" alt="">{% endif %}</td>
                         <td class="fw-semibold">#{{ c.id }}</td>
                         <td>{% t c.get_category_display %}</td>
-                        <td>{{ c.area }}</td>
+                        <td>{{ c.area }}{% if c.city %}, {{ c.city }}{% endif %}</td>
                         <td>{% include 'partials/badge.html' with s=c.status %}</td>
                         <td>{% include 'partials/ai_badge.html' with c=c %}</td>
                         <td class="text-muted small">{{ c.created_at|date:"d M Y, h:i A" }}</td>

@@ -1,0 +1,98 @@
+{% load eco_tags %}
+
+{# ---------- MC officer ---------- #}
+{% if is_officer %}
+    {% if obj.status == 'pending' %}
+    <div class="card-x p-4 mb-3 border-success-soft">
+        <h6 class="fw-bold"><i class="bi bi-patch-check text-success me-1"></i> {% t "Approve request" %}</h6>
+        <p class="small text-muted">{% t "Check the details, photo and address. If everything is correct, approve it and optionally choose a collector." %}</p>
+        <form method="post" action="{% url 'task_approve' kind obj.pk %}">
+            {% csrf_token %}
+            <label class="form-label small fw-semibold">{% t "Assign to collector (optional)" %}</label>
+            <select name="collector" class="form-select mb-3">
+                <option value="">{% t "Let any collector accept it" %}</option>
+                {% for c in collectors %}<option value="{{ c.pk }}">{{ c.get_full_name|default:c.username }}{% if c.profile.city %} · {{ c.profile.city }}{% endif %}</option>{% endfor %}
+            </select>
+            <button class="btn btn-brand w-100"><i class="bi bi-check2-circle me-1"></i> {% t "Approve" %}</button>
+        </form>
+    </div>
+    <div class="card-x p-4 mb-3 border-danger-soft">
+        <h6 class="fw-bold"><i class="bi bi-x-octagon text-danger me-1"></i> {% t "Reject request" %}</h6>
+        <form method="post" action="{% url 'task_reject' kind obj.pk %}">
+            {% csrf_token %}
+            <label class="form-label small fw-semibold">{% t "Reason (the citizen will see this)" %}</label>
+            <textarea name="reason" rows="3" class="form-control mb-3" required placeholder="{% t 'e.g. Address is incomplete / photo does not show waste' %}"></textarea>
+            <button class="btn btn-outline-danger w-100"><i class="bi bi-x-lg me-1"></i> {% t "Reject" %}</button>
+        </form>
+    </div>
+    {% elif obj.status == 'approved' %}
+    <div class="card-x p-4 mb-3">
+        <h6 class="fw-bold"><i class="bi bi-person-badge me-1"></i> {% t "Collector" %}</h6>
+        <p class="small mb-2">{% if obj.collector %}{% t "Assigned to" %}: <strong>{{ obj.collector.get_full_name|default:obj.collector.username }}</strong>{% else %}<span class="text-muted">{% t "Not assigned yet. Any collector in the city can accept it." %}</span>{% endif %}</p>
+        <form method="post" action="{% url 'task_assign' kind obj.pk %}" class="d-flex gap-2">
+            {% csrf_token %}
+            <select name="collector" class="form-select" required>
+                <option value="">{% t "Choose collector" %}</option>
+                {% for c in collectors %}<option value="{{ c.pk }}" {% if obj.collector_id == c.pk %}selected{% endif %}>{{ c.get_full_name|default:c.username }}</option>{% endfor %}
+            </select>
+            <button class="btn btn-brand">{% t "Assign" %}</button>
+        </form>
+    </div>
+    {% elif obj.status == 'cleaned' %}
+    <div class="card-x p-4 mb-3 border-success-soft">
+        <h6 class="fw-bold"><i class="bi bi-camera text-success me-1"></i> {% t "Verify cleaning" %}</h6>
+        <p class="small text-muted">{% t "Compare the before and after photos." %}
+            {% if obj.after_ai_score is not None %}<br>{% t "AI: waste still visible in the after photo" %}: <strong>{{ obj.after_ai_score|floatformat:1 }}%</strong>{% endif %}</p>
+        <form method="post" action="{% url 'task_verify' kind obj.pk %}" class="mb-3">
+            {% csrf_token %}
+            <button class="btn btn-brand w-100"><i class="bi bi-check2-circle me-1"></i> {% t "Approve cleaning" %}</button>
+        </form>
+        <form method="post" action="{% url 'task_redo' kind obj.pk %}">
+            {% csrf_token %}
+            <textarea name="reason" rows="2" class="form-control mb-2" required placeholder="{% t 'Why is it not clean yet?' %}"></textarea>
+            <button class="btn btn-outline-danger w-100"><i class="bi bi-arrow-repeat me-1"></i> {% t "Send back for re-cleaning" %}</button>
+        </form>
+    </div>
+    {% endif %}
+{% endif %}
+
+{# ---------- Garbage collector ---------- #}
+{% if is_collector %}
+    {% if can_accept %}
+    <div class="card-x p-4 mb-3 border-success-soft">
+        <h6 class="fw-bold"><i class="bi bi-hand-thumbs-up text-success me-1"></i> {% t "Accept this task" %}</h6>
+        <p class="small text-muted">{% t "Tap the address to open Google Maps directions, then upload a photo once the place is clean." %}</p>
+        <form method="post" action="{% url 'task_accept' kind obj.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-brand w-100"><i class="bi bi-play-fill me-1"></i> {% t "Accept and start" %}</button>
+        </form>
+    </div>
+    {% endif %}
+    {% if is_task_collector and obj.status == 'in_progress' or is_task_collector and obj.status == 'approved' %}
+    <div class="card-x p-4 mb-3">
+        <h6 class="fw-bold"><i class="bi bi-camera text-success me-1"></i> {% t "Upload cleaned photo" %}</h6>
+        <form method="post" enctype="multipart/form-data" action="{% url 'task_clean' kind obj.pk %}" data-loading="{% t 'Uploading...' %}">
+            {% csrf_token %}
+            <input type="file" name="image" accept="image/*" capture="environment" class="form-control mb-2" required>
+            <textarea name="note" rows="2" class="form-control mb-3" maxlength="500" placeholder="{% t 'Note for the MC office (optional)' %}"></textarea>
+            <button class="btn btn-brand w-100"><i class="bi bi-cloud-arrow-up me-1"></i> {% t "Submit for verification" %}</button>
+        </form>
+    </div>
+    {% endif %}
+    {% if is_task_collector and obj.status == 'cleaned' %}
+    <div class="alert alert-info"><i class="bi bi-hourglass-split me-1"></i> {% t "Waiting for the MC office to verify your cleaning photo." %}</div>
+    {% endif %}
+    {% if is_task_collector and obj.status == 'resolved' %}
+    <div class="alert alert-success"><i class="bi bi-check-circle-fill me-1"></i> {% t "The MC office verified this cleaning. It counts in your cleaned tasks." %}</div>
+    {% endif %}
+{% endif %}
+
+{# ---------- Citizen ---------- #}
+{% if obj.user_id == request.user.pk and obj.status == 'pending' and is_citizen %}
+<div class="card-x p-4 mb-3">
+    <form method="post" action="{% url 'task_cancel' kind obj.pk %}" onsubmit="return confirm('{% t 'Cancel this request?' %}');">
+        {% csrf_token %}
+        <button class="btn btn-outline-danger w-100"><i class="bi bi-x-circle me-1"></i> {% t "Cancel request" %}</button>
+    </form>
+</div>
+{% endif %}

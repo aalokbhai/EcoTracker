@@ -1,0 +1,168 @@
+"""Hindi text for the approval / collector workflow (merged into HI in translations.py)."""
+
+HI_WORKFLOW = {
+    # roles / navigation
+    "Citizen": "नागरिक",
+    "Garbage Collector": "कचरा कलेक्टर",
+    "Garbage Collectors": "कचरा कलेक्टर",
+    "MC Officer": "नगर निगम अधिकारी",
+    "MC Office": "नगर निगम कार्यालय",
+    "My Tasks": "मेरे काम",
+    "Collector": "कलेक्टर",
+    "Collectors": "कलेक्टर",
+    "Collector Dashboard": "कलेक्टर डैशबोर्ड",
+    "Welcome": "स्वागत है",
+    "One login for citizens, garbage collectors and the MC office.":
+        "नागरिक, कचरा कलेक्टर और नगर निगम कार्यालय के लिए एक ही लॉगिन।",
+    "Citizens: report waste and track it live": "नागरिक: कचरे की शिकायत करें और लाइव ट्रैक करें",
+    "Collectors: get tasks with map directions": "कलेक्टर: मैप के रास्ते के साथ काम पाएँ",
+    "MC office: review, approve and verify": "नगर निगम: जाँचें, मंज़ूर करें और सत्यापित करें",
+    "Collectors get map directions to every task": "कलेक्टर को हर काम का मैप रास्ता मिलता है",
+    "Collector accounts are activated after the MC office approves them.":
+        "कलेक्टर अकाउंट नगर निगम कार्यालय की मंज़ूरी के बाद चालू होते हैं।",
+    "An account with this email already exists.": "इस ईमेल से अकाउंट पहले से मौजूद है।",
+    "Enter a valid 10-digit mobile number.": "सही 10 अंकों का मोबाइल नंबर दर्ज करें।",
+    "Enter a valid 6-digit pincode.": "सही 6 अंकों का पिनकोड दर्ज करें।",
+    "Account created. The MC office will approve your collector account shortly.":
+        "अकाउंट बन गया। नगर निगम कार्यालय जल्द ही आपका कलेक्टर अकाउंट मंज़ूर करेगा।",
+    "You do not have permission to open that page.": "आपको यह पेज खोलने की अनुमति नहीं है।",
+    "Your collector account is waiting for approval from the MC office.":
+        "आपका कलेक्टर अकाउंट नगर निगम कार्यालय की मंज़ूरी का इंतज़ार कर रहा है।",
+    "Waiting for MC office approval": "नगर निगम की मंज़ूरी का इंतज़ार",
+    "Your collector account was created. You will get tasks as soon as the Municipal Corporation office approves it.":
+        "आपका कलेक्टर अकाउंट बन गया है। नगर निगम कार्यालय की मंज़ूरी मिलते ही आपको काम मिलने लगेंगे।",
+
+    # statuses / timeline
+    "Approved": "मंज़ूर",
+    "Awaiting Verification": "सत्यापन बाकी",
+    "Awaiting verification": "सत्यापन बाकी",
+    "Rejected": "अस्वीकृत",
+    "Cancelled": "रद्द",
+    "Complaint": "शिकायत",
+    "Pickup": "पिकअप",
+    "Submitted": "जमा हुई",
+    "Approved by MC office": "नगर निगम ने मंज़ूर किया",
+    "Rejected by MC office": "नगर निगम ने अस्वीकार किया",
+    "Collector working on it": "कलेक्टर काम कर रहा है",
+    "Cleaned, awaiting MC check": "सफ़ाई हुई, नगर निगम की जाँच बाकी",
+    "Resolved": "हल हो गई",
+    "Assigned to a collector": "कलेक्टर को सौंपा गया",
+    "Collector started the work": "कलेक्टर ने काम शुरू किया",
+    "Cleaning photo uploaded": "सफ़ाई की फोटो अपलोड हुई",
+    "Cleaning verified by MC office": "नगर निगम ने सफ़ाई सत्यापित की",
+    "Sent back for re-cleaning": "दोबारा सफ़ाई के लिए वापस भेजा",
+    "Cancelled by citizen": "नागरिक ने रद्द किया",
+    "This request was cancelled by the citizen.": "यह अनुरोध नागरिक ने रद्द कर दिया।",
+    "Reason": "कारण",
+    "Activity log": "गतिविधि लॉग",
+    "Before": "पहले",
+    "After (cleaned)": "बाद में (साफ़)",
+    "Location": "स्थान",
+    "City": "शहर",
+    "Phone": "फ़ोन",
+    "Account": "अकाउंट",
+    "Type": "प्रकार",
+    "Task": "काम",
+    "Open": "खोलें",
+    "Review": "जाँचें",
+    "Reject": "अस्वीकार करें",
+    "Approve": "मंज़ूर करें",
+    "Assign": "सौंपें",
+    "Suspend": "निलंबित करें",
+    "Redo": "दोबारा करें",
+    "Collector note": "कलेक्टर का नोट",
+    "Requested by": "अनुरोधकर्ता",
+    "Requested on": "अनुरोध की तारीख",
+    "Back to my tasks": "मेरे कामों पर वापस",
+    "Back to pickups": "पिकअप पर वापस",
+
+    # map / address
+    "Get directions": "रास्ता देखें",
+    "Open directions in Google Maps": "Google Maps में रास्ता खोलें",
+    "Address (tap for directions)": "पता (रास्ते के लिए टैप करें)",
+    "Give the full address with city, state and pincode so the collector can find the place on the map.":
+        "शहर, राज्य और पिनकोड के साथ पूरा पता लिखें ताकि कलेक्टर मैप पर जगह ढूँढ सके।",
+
+    # MC office screens
+    "Approve request": "अनुरोध मंज़ूर करें",
+    "Reject request": "अनुरोध अस्वीकार करें",
+    "Check the details, photo and address. If everything is correct, approve it and optionally choose a collector.":
+        "विवरण, फोटो और पता जाँचें। सब सही हो तो मंज़ूर करें और चाहें तो कलेक्टर चुनें।",
+    "Assign to collector (optional)": "कलेक्टर को सौंपें (वैकल्पिक)",
+    "Let any collector accept it": "कोई भी कलेक्टर इसे ले सकता है",
+    "Choose collector": "कलेक्टर चुनें",
+    "Assigned to": "सौंपा गया",
+    "Not assigned yet. Any collector in the city can accept it.":
+        "अभी किसी को नहीं सौंपा। शहर का कोई भी कलेक्टर इसे ले सकता है।",
+    "Reason (the citizen will see this)": "कारण (नागरिक को दिखेगा)",
+    "e.g. Address is incomplete / photo does not show waste":
+        "जैसे: पता अधूरा है / फोटो में कचरा नहीं दिखता",
+    "Verify cleaning": "सफ़ाई सत्यापित करें",
+    "Compare the before and after photos.": "पहले और बाद की फोटो मिलाकर देखें।",
+    "AI: waste still visible in the after photo": "AI: बाद की फोटो में अब भी दिख रहा कचरा",
+    "Approve cleaning": "सफ़ाई मंज़ूर करें",
+    "Why is it not clean yet?": "अभी साफ़ क्यों नहीं माना गया?",
+    "Send back for re-cleaning": "दोबारा सफ़ाई के लिए वापस भेजें",
+    "Cancel request": "अनुरोध रद्द करें",
+    "Cancel this request?": "क्या यह अनुरोध रद्द करना है?",
+    "Review every complaint, approve or reject it, and verify the cleaning.":
+        "हर शिकायत जाँचें, मंज़ूर या अस्वीकार करें और सफ़ाई सत्यापित करें।",
+    "Approve pickups, assign collectors and verify the cleaning.":
+        "पिकअप मंज़ूर करें, कलेक्टर सौंपें और सफ़ाई सत्यापित करें।",
+    "Approve new collector accounts and see how much each collector has cleaned.":
+        "नए कलेक्टर अकाउंट मंज़ूर करें और देखें कि हर कलेक्टर ने कितना साफ़ किया।",
+    "No collectors have registered yet.": "अभी तक कोई कलेक्टर रजिस्टर नहीं हुआ।",
+    "Waiting for approval": "मंज़ूरी का इंतज़ार",
+    "collector account(s) are waiting for approval.": "कलेक्टर अकाउंट मंज़ूरी का इंतज़ार कर रहे हैं।",
+    "Waiting for your decision": "आपके फ़ैसले का इंतज़ार",
+    "All caught up. Nothing is waiting.": "सब निपट गया। कुछ भी बाकी नहीं है।",
+    "With collectors": "कलेक्टर के पास",
+    "Total complaints": "कुल शिकायतें",
+    "Needs review": "जाँच बाकी",
+
+    # collector screens
+    "Cleaned": "साफ़ किया",
+    "Cleaned (verified)": "साफ़ किया (सत्यापित)",
+    "Not cleaned yet": "अभी साफ़ नहीं हुआ",
+    "Sent back to redo": "दोबारा करने को लौटाए",
+    "Your completion rate": "आपकी पूर्णता दर",
+    "Nothing here yet.": "यहाँ अभी कुछ नहीं है।",
+    "No new tasks are available in your city right now.": "अभी आपके शहर में कोई नया काम उपलब्ध नहीं है।",
+    "View & accept": "देखें और स्वीकारें",
+    "Open & clean": "खोलें और साफ़ करें",
+    "Accept this task": "यह काम स्वीकार करें",
+    "Accept and start": "स्वीकार करें और शुरू करें",
+    "Tap the address to open Google Maps directions, then upload a photo once the place is clean.":
+        "Google Maps का रास्ता खोलने के लिए पते पर टैप करें, और जगह साफ़ होने पर फोटो अपलोड करें।",
+    "Upload cleaned photo": "साफ़ जगह की फोटो अपलोड करें",
+    "Uploading...": "अपलोड हो रहा है...",
+    "Note for the MC office (optional)": "नगर निगम के लिए नोट (वैकल्पिक)",
+    "Submit for verification": "सत्यापन के लिए भेजें",
+    "Waiting for the MC office to verify your cleaning photo.":
+        "नगर निगम आपकी सफ़ाई की फोटो सत्यापित करे, इसका इंतज़ार है।",
+    "The MC office verified this cleaning. It counts in your cleaned tasks.":
+        "नगर निगम ने यह सफ़ाई सत्यापित कर दी। यह आपके साफ़ किए कामों में गिनी जाएगी।",
+    "Photo is too large. Maximum size is 8 MB.": "फोटो बहुत बड़ी है। अधिकतम साइज़ 8 MB है।",
+
+    # messages
+    "The MC office will review your complaint shortly.": "नगर निगम कार्यालय जल्द ही आपकी शिकायत की जाँच करेगा।",
+    "The MC office will review your request shortly.": "नगर निगम कार्यालय जल्द ही आपके अनुरोध की जाँच करेगा।",
+    "Request #{id} approved.": "अनुरोध #{id} मंज़ूर हो गया।",
+    "Request #{id} rejected and the citizen can now see the reason.":
+        "अनुरोध #{id} अस्वीकृत हुआ और नागरिक अब कारण देख सकता है।",
+    "Request #{id} assigned to the collector.": "अनुरोध #{id} कलेक्टर को सौंप दिया गया।",
+    "Cleaning of request #{id} verified. Marked as resolved.": "अनुरोध #{id} की सफ़ाई सत्यापित हुई। हल के रूप में दर्ज।",
+    "Request #{id} sent back to the collector for re-cleaning.": "अनुरोध #{id} दोबारा सफ़ाई के लिए कलेक्टर को लौटाया गया।",
+    "You accepted task #{id}. Use the address link to get directions.":
+        "आपने काम #{id} स्वीकार किया। रास्ते के लिए पते के लिंक का उपयोग करें।",
+    "Photo uploaded. The MC office will verify the cleaning.": "फोटो अपलोड हो गई। नगर निगम सफ़ाई सत्यापित करेगा।",
+    "Request #{id} cancelled.": "अनुरोध #{id} रद्द हो गया।",
+    "Collector {name} approved.": "कलेक्टर {name} मंज़ूर हुआ।",
+    "Collector {name} suspended.": "कलेक्टर {name} निलंबित हुआ।",
+    "This request is no longer in the right state for that action.": "यह अनुरोध अब इस कार्रवाई के लायक स्थिति में नहीं है।",
+    "Please choose an approved garbage collector.": "कृपया मंज़ूर किया हुआ कचरा कलेक्टर चुनें।",
+    "Please write the reason for rejecting this request.": "कृपया इस अनुरोध को अस्वीकार करने का कारण लिखें।",
+    "Please write why the cleaning is not acceptable.": "कृपया लिखें कि सफ़ाई स्वीकार क्यों नहीं है।",
+    "This task is assigned to another collector.": "यह काम किसी दूसरे कलेक्टर को सौंपा गया है।",
+    "You can only cancel your own requests.": "आप केवल अपने अनुरोध रद्द कर सकते हैं।",
+}

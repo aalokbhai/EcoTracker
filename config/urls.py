@@ -9,7 +9,10 @@ urlpatterns = [
     path('complaints/', include('complaints.urls')),
     path('pickups/', include('pickups.urls')),
     path('manage/', include('complaints.admin_urls')),
-    path('awareness/', include('awareness.urls')), 
+    path('collector/', include('complaints.collector_urls')),
+    path('tasks/', include('complaints.task_urls')),
+    path('awareness/', include('awareness.urls')),
+    path('feedback/', include('feedback.urls')),
 ]
 
 if settings.DEBUG:

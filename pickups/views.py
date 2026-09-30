@@ -1,14 +1,16 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+
 from accounts.i18n import tr
+from accounts.roles import citizen_required
+from complaints.task_views import build_task_context, load_task
 
 from .forms import PickupForm
 from .models import PickupRequest
 
 
-@login_required
+@citizen_required
 def request_pickup(request):
     if request.method == 'POST':
         form = PickupForm(request.POST)
@@ -17,25 +19,21 @@ def request_pickup(request):
             pickup.user = request.user
             pickup.save()
             messages.success(request, tr('Pickup request #{id} submitted successfully.').format(id=pickup.id))
-            messages.info(request, tr('Pickup #{id} cancelled.').format(id=pickup.id))
-            return redirect('my_pickups')
+            messages.info(request, tr('The MC office will review your request shortly.'))
+            return redirect('pickup_detail', pk=pickup.pk)
     else:
-        form = PickupForm()
+        profile = request.user.profile
+        form = PickupForm(initial={'city': profile.city, 'state': profile.state, 'pincode': profile.pincode})
     return render(request, 'pickups/request.html', {'form': form})
 
 
-@login_required
+@citizen_required
 def my_pickups(request):
     pickups = PickupRequest.objects.filter(user=request.user)
     return render(request, 'pickups/my_pickups.html', {'pickups': pickups})
 
 
 @login_required
-@require_POST
-def cancel_pickup(request, pk):
-    pickup = get_object_or_404(PickupRequest, pk=pk, user=request.user)
-    if pickup.status == 'pending':
-        pickup.status = 'cancelled'
-        pickup.save(update_fields=['status'])
-        messages.info(request, f'Pickup #{pickup.id} cancel ho gayi.')
-    return redirect('my_pickups')
+def pickup_detail(request, pk):
+    pickup = load_task(request, 'pickup', pk)
+    return render(request, 'pickups/detail.html', build_task_context(request, pickup))

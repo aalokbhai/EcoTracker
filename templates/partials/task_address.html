@@ -1,0 +1,16 @@
+{% load eco_tags %}
+<div class="detail-row"><div class="k">{% t "Address" %}</div>
+    <div>
+        {% if can_navigate %}
+        <a href="{{ obj.maps_directions_url }}" target="_blank" rel="noopener" class="addr-link" title="{% t 'Open directions in Google Maps' %}">
+            <i class="bi bi-geo-alt-fill"></i> {{ obj.full_address }} <i class="bi bi-box-arrow-up-right small"></i>
+        </a>
+        <div class="mt-2">
+            <a href="{{ obj.maps_directions_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-brand"><i class="bi bi-sign-turn-right me-1"></i> {% t "Get directions" %}</a>
+        </div>
+        <div class="map-frame mt-3"><iframe src="{{ obj.maps_embed_url }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map"></iframe></div>
+        {% else %}
+        <i class="bi bi-geo-alt-fill text-muted"></i> {{ obj.full_address }}
+        {% endif %}
+    </div>
+</div>

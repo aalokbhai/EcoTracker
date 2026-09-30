@@ -236,4 +236,44 @@ HI = {
     "Pickup request #{id} submitted successfully.": "अनुरोध #{id} सफलतापूर्वक भेज दिया गया।",
     "Pickup #{id} cancelled.": "अनुरोध #{id} रद्द कर दिया गया।",
     "Please choose today or a future date.": "कृपया आज या आगे की तारीख चुनें।",
+
+    # ---- Feedback ----
+    "Feedback": "प्रतिक्रिया",
+    "Community": "समुदाय",
+    "Feedback & Reviews": "प्रतिक्रिया और समीक्षाएँ",
+    "Tell us what you think about EcoTrack. Your words help us improve.":
+        "EcoTrack के बारे में अपनी राय बताएं। आपकी बात हमें बेहतर बनाती है।",
+    "Total reviews": "कुल समीक्षाएँ",
+    "Share your feedback": "अपनी प्रतिक्रिया दें",
+    "Your rating": "आपकी रेटिंग",
+    "Your comment": "आपकी टिप्पणी",
+    "Photo (optional)": "फोटो (ज़रूरी नहीं)",
+    "Share your experience with EcoTrack": "EcoTrack के साथ अपना अनुभव साझा करें",
+    "JPG or PNG, up to 3 MB.": "JPG या PNG, अधिकतम 3 MB।",
+    "Post feedback": "प्रतिक्रिया भेजें",
+    "Please login to share your feedback or reply to others.":
+        "प्रतिक्रिया देने या दूसरों को जवाब देने के लिए कृपया लॉगिन करें।",
+    "Reply": "जवाब",
+    "Write a reply...": "जवाब लिखें...",
+    "Send reply": "जवाब भेजें",
+    "Login to reply": "जवाब देने के लिए लॉगिन करें",
+    "Team": "टीम",
+    "No feedback yet. Be the first to share your thoughts!":
+        "अभी तक कोई प्रतिक्रिया नहीं आई। सबसे पहले आप अपनी राय दें!",
+    "Previous": "पिछला",
+    "Next": "अगला",
+    "Page": "पेज",
+    "What people say": "लोग क्या कहते हैं",
+    "Loved by our community": "हमारे समुदाय की पसंद",
+    "See all feedback": "सारी प्रतिक्रियाएँ देखें",
+    "Thank you! Your feedback has been posted.": "धन्यवाद! आपकी प्रतिक्रिया पोस्ट हो गई।",
+    "Your reply has been posted.": "आपका जवाब पोस्ट हो गया।",
+    "Please write a reply before sending.": "भेजने से पहले कृपया जवाब लिखें।",
+    "Please select a star rating.": "कृपया स्टार रेटिंग चुनें।",
+    "Photo is too large. Maximum size is 3 MB.": "फोटो बहुत बड़ी है। अधिकतम साइज़ 3 MB है।",
 }
+
+
+from .translations_workflow import HI_WORKFLOW  # noqa: E402
+
+HI.update(HI_WORKFLOW)

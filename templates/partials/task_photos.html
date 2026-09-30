@@ -1,0 +1,17 @@
+{% load eco_tags %}
+{% if obj.before_image or obj.after_image %}
+<div class="row g-3 mb-3">
+    {% if obj.before_image %}
+    <div class="{% if obj.after_image %}col-md-6{% else %}col-12{% endif %}">
+        <div class="photo-label">{% t "Before" %}</div>
+        <a href="{{ obj.before_image.url }}" target="_blank"><img src="{{ obj.before_image.url }}" class="detail-img" alt="Before"></a>
+    </div>
+    {% endif %}
+    {% if obj.after_image %}
+    <div class="{% if obj.before_image %}col-md-6{% else %}col-12{% endif %}">
+        <div class="photo-label after">{% t "After (cleaned)" %}</div>
+        <a href="{{ obj.after_image.url }}" target="_blank"><img src="{{ obj.after_image.url }}" class="detail-img" alt="After"></a>
+    </div>
+    {% endif %}
+</div>
+{% endif %}

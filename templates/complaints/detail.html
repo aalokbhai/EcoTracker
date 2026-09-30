@@ -1,63 +1,45 @@
 {% extends 'base.html' %}
 {% load eco_tags %}
-{% block title %}{% t "Complaint" %} #{{ complaint.id }}{% endblock %}
+{% block title %}{% t "Complaint" %} #{{ obj.id }}{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <a href="{% url 'my_complaints' %}" class="link-brand small"><i class="bi bi-arrow-left"></i> {% t "Back to complaints" %}</a>
+    {% if is_officer %}<a href="{% url 'manage_complaints' %}" class="link-brand small"><i class="bi bi-arrow-left"></i> {% t "Back to complaints" %}</a>
+    {% elif is_collector %}<a href="{% url 'collector_dashboard' %}" class="link-brand small"><i class="bi bi-arrow-left"></i> {% t "Back to my tasks" %}</a>
+    {% else %}<a href="{% url 'my_complaints' %}" class="link-brand small"><i class="bi bi-arrow-left"></i> {% t "Back to complaints" %}</a>{% endif %}
     <div class="d-flex flex-wrap justify-content-between align-items-center mt-2 mb-4 gap-2">
-        <h1 class="page-title mb-0">{% t "Complaint" %} #{{ complaint.id }}</h1>
-        {% include 'partials/badge.html' with s=complaint.status %}
+        <h1 class="page-title mb-0">{% t "Complaint" %} #{{ obj.id }}</h1>
+        {% include 'partials/badge.html' with s=obj.status %}
     </div>
 
     <div class="row g-4">
         <div class="col-lg-8">
             <div class="card-x p-4">
-                {% if complaint.image %}
-                    <img src="{{ complaint.image.url }}" class="detail-img mb-3" alt="Complaint photo">
-                {% endif %}
-                <div class="detail-row"><div class="k">{% t "Category" %}</div><div class="fw-semibold">{% t complaint.get_category_display %}</div></div>
-                <div class="detail-row"><div class="k">{% t "Area" %}</div><div>{{ complaint.area }}</div></div>
-                {% if complaint.address %}<div class="detail-row"><div class="k">{% t "Address" %}</div><div>{{ complaint.address }}</div></div>{% endif %}
-                <div class="detail-row"><div class="k">{% t "Description" %}</div><div>{{ complaint.description }}</div></div>
-                <div class="detail-row"><div class="k">{% t "Reported on" %}</div><div>{{ complaint.created_at|date:"d M Y, h:i A" }}</div></div>
-                <div class="detail-row"><div class="k">{% t "Reported by" %}</div><div>{{ complaint.user.username }}</div></div>
+                {% include 'partials/task_photos.html' %}
+                <div class="detail-row"><div class="k">{% t "Category" %}</div><div class="fw-semibold">{% t obj.get_category_display %}</div></div>
+                <div class="detail-row"><div class="k">{% t "Area" %}</div><div>{{ obj.area }}</div></div>
+                {% include 'partials/task_address.html' %}
+                <div class="detail-row"><div class="k">{% t "Description" %}</div><div>{{ obj.description }}</div></div>
+                <div class="detail-row"><div class="k">{% t "Reported on" %}</div><div>{{ obj.created_at|date:"d M Y, h:i A" }}</div></div>
+                <div class="detail-row"><div class="k">{% t "Reported by" %}</div><div>{{ obj.user.get_full_name|default:obj.user.username }}{% if is_officer or is_collector %}{% if obj.user.profile.phone %} · <a href="tel:{{ obj.user.profile.phone }}">{{ obj.user.profile.phone }}</a>{% endif %}{% endif %}</div></div>
+                {% if obj.collector %}<div class="detail-row"><div class="k">{% t "Collector" %}</div><div>{{ obj.collector.get_full_name|default:obj.collector.username }}</div></div>{% endif %}
+                {% if obj.collector_note %}<div class="detail-row"><div class="k">{% t "Collector note" %}</div><div>{{ obj.collector_note }}</div></div>{% endif %}
+                {% if obj.admin_remark %}<div class="detail-row"><div class="k">{% t "Admin remark" %}</div><div>{{ obj.admin_remark }}</div></div>{% endif %}
             </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="card-x p-4 mb-3">
-                <h6 class="fw-bold mb-4">{% t "Progress" %}</h6>
-                <ul class="timeline">
-                    <li class="tl-item done">
-                        <span class="tl-dot"><i class="bi bi-send"></i></span>
-                        <div><strong>{% t "Submitted" %}</strong><div class="text-muted small">{{ complaint.created_at|date:"d M, h:i A" }}</div></div>
-                    </li>
-                    <li class="tl-item {% if complaint.status == 'in_progress' %}active{% elif complaint.status == 'resolved' %}done{% endif %}">
-                        <span class="tl-dot"><i class="bi bi-gear"></i></span>
-                        <div><strong>{% t "In Progress" %}</strong><div class="text-muted small">{% t "The team is working on it" %}</div></div>
-                    </li>
-                    <li class="tl-item {% if complaint.status == 'resolved' %}done{% endif %}">
-                        <span class="tl-dot"><i class="bi bi-check2-circle"></i></span>
-                        <div><strong>{% t "Resolved" %}</strong>{% if complaint.status == 'resolved' %}<div class="text-muted small">{{ complaint.updated_at|date:"d M, h:i A" }}</div>{% endif %}</div>
-                    </li>
-                </ul>
-            </div>
+            {% include 'partials/task_actions.html' %}
+            {% include 'partials/task_progress.html' %}
 
             <div class="card-x p-4 mb-3">
                 <h6 class="fw-bold">{% t "AI verification" %}</h6>
-                {% include 'partials/ai_badge.html' with c=complaint %}
-                {% if complaint.ai_confidence is not None %}
-                    <div class="small text-muted mt-2">{% t "Waste probability" %}: {{ complaint.ai_confidence|floatformat:1 }}%</div>
+                {% include 'partials/ai_badge.html' with c=obj %}
+                {% if obj.ai_confidence is not None %}
+                    <div class="small text-muted mt-2">{% t "Waste probability" %}: {{ obj.ai_confidence|floatformat:1 }}%</div>
                 {% endif %}
             </div>
-
-            {% if complaint.admin_remark %}
-            <div class="card-x p-4">
-                <h6 class="fw-bold"><i class="bi bi-chat-left-text me-1"></i> {% t "Admin remark" %}</h6>
-                <p class="mb-0 text-muted">{{ complaint.admin_remark }}</p>
-            </div>
-            {% endif %}
+            {% include 'partials/task_history.html' %}
         </div>
     </div>
 </div>

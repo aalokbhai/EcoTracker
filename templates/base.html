@@ -27,11 +27,15 @@
             <ul class="navbar-nav me-auto ms-lg-3 gap-lg-1">
                 <li class="nav-item"><a class="nav-link {% if n == 'home' %}active{% endif %}" href="{% url 'home' %}">{% t "Home" %}</a></li>
                 <li class="nav-item"><a class="nav-link {% if n == 'awareness' %}active{% endif %}" href="{% url 'awareness' %}">{% t "Awareness" %}</a></li>
+                <li class="nav-item"><a class="nav-link {% if n == 'feedback' %}active{% endif %}" href="{% url 'feedback' %}">{% t "Feedback" %}</a></li>
                 {% if user.is_authenticated %}
+                    {% if is_citizen %}
                     <li class="nav-item"><a class="nav-link {% if n == 'report_complaint' %}active{% endif %}" href="{% url 'report_complaint' %}">{% t "Report Issue" %}</a></li>
                     <li class="nav-item"><a class="nav-link {% if n == 'request_pickup' %}active{% endif %}" href="{% url 'request_pickup' %}">{% t "Request Pickup" %}</a></li>
-                    {% if user.is_staff %}
-                    <li class="nav-item"><a class="nav-link {% if n == 'dashboard' or n == 'manage_complaints' or n == 'manage_pickups' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> {% t "Admin" %}</a></li>
+                    {% elif is_collector %}
+                    <li class="nav-item"><a class="nav-link {% if n == 'collector_dashboard' %}active{% endif %}" href="{% url 'collector_dashboard' %}"><i class="bi bi-truck"></i> {% t "My Tasks" %}</a></li>
+                    {% elif is_officer %}
+                    <li class="nav-item"><a class="nav-link {% if n == 'dashboard' or n == 'manage_complaints' or n == 'manage_pickups' or n == 'manage_collectors' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> {% t "MC Office" %}</a></li>
                     {% endif %}
                 {% endif %}
             </ul>
@@ -49,8 +53,11 @@
                         <span class="fw-semibold">{{ user.username }}</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li class="px-3 py-1"><span class="badge-soft b-muted">{% if is_officer %}{% t "MC Officer" %}{% elif is_collector %}{% t "Garbage Collector" %}{% else %}{% t "Citizen" %}{% endif %}</span></li>
+                        {% if is_citizen %}
                         <li><a class="dropdown-item" href="{% url 'my_complaints' %}"><i class="bi bi-flag me-2"></i>{% t "My Complaints" %}</a></li>
                         <li><a class="dropdown-item" href="{% url 'my_pickups' %}"><i class="bi bi-truck me-2"></i>{% t "My Pickups" %}</a></li>
+                        {% endif %}
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form method="post" action="{% url 'logout' %}">
@@ -96,7 +103,8 @@
                 <div class="d-flex flex-column gap-1 small">
                     <a href="{% url 'home' %}">{% t "Home" %}</a>
                     <a href="{% url 'awareness' %}">{% t "Waste Awareness" %}</a>
-                    {% if user.is_authenticated %}<a href="{% url 'report_complaint' %}">{% t "Report an Issue" %}</a>{% endif %}
+                    <a href="{% url 'feedback' %}">{% t "Feedback" %}</a>
+                    {% if is_citizen %}<a href="{% url 'report_complaint' %}">{% t "Report an Issue" %}</a>{% endif %}
                 </div>
             </div>
             <div class="col-md-3">

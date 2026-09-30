@@ -10,18 +10,28 @@
     </div>
     {% include 'partials/manage_tabs.html' %}
 
+    {% if stats.collectors_waiting %}
+    <div class="alert alert-warning d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-person-exclamation me-1"></i> {{ stats.collectors_waiting }} {% t "collector account(s) are waiting for approval." %}</span>
+        <a href="{% url 'manage_collectors' %}" class="btn btn-sm btn-brand">{% t "Review" %}</a>
+    </div>
+    {% endif %}
     <div class="row g-3 mb-4">
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-slate"><i class="bi bi-flag-fill"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.total }}">0</div><div class="stat-label">{% t "Total" %}</div></div>
+            <div><div class="stat-num" data-count="{{ stats.total }}">0</div><div class="stat-label">{% t "Total complaints" %}</div></div>
         </div></div>
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-amber"><i class="bi bi-hourglass-split"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.pending }}">0</div><div class="stat-label">{% t "Pending" %}</div></div>
+            <div><div class="stat-num" data-count="{{ stats.pending }}">0</div><div class="stat-label">{% t "Needs review" %}</div></div>
         </div></div>
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
-            <div class="stat-icon ic-blue"><i class="bi bi-gear-fill"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.in_progress }}">0</div><div class="stat-label">{% t "In Progress" %}</div></div>
+            <div class="stat-icon ic-blue"><i class="bi bi-truck"></i></div>
+            <div><div class="stat-num" data-count="{{ stats.in_progress }}">0</div><div class="stat-label">{% t "With collectors" %}</div></div>
+        </div></div>
+        <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
+            <div class="stat-icon ic-violet"><i class="bi bi-camera-fill"></i></div>
+            <div><div class="stat-num" data-count="{{ stats.verify }}">0</div><div class="stat-label">{% t "Awaiting verification" %}</div></div>
         </div></div>
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-green"><i class="bi bi-check-circle-fill"></i></div>
@@ -31,10 +41,29 @@
             <div class="stat-icon ic-red"><i class="bi bi-exclamation-triangle-fill"></i></div>
             <div><div class="stat-num" data-count="{{ stats.review }}">0</div><div class="stat-label">{% t "AI flagged" %}</div></div>
         </div></div>
-        <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
-            <div class="stat-icon ic-violet"><i class="bi bi-truck"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.pickups }}">0</div><div class="stat-label">{% t "Open pickups" %}</div></div>
-        </div></div>
+    </div>
+
+    <div class="card-x overflow-hidden mb-4">
+        <div class="p-4 pb-2"><h5 class="fw-bold mb-0"><i class="bi bi-inbox text-warning"></i> {% t "Waiting for your decision" %}</h5></div>
+        <div class="table-responsive">
+            <table class="table table-eco">
+                <thead><tr><th>{% t "Type" %}</th><th>{% t "ID" %}</th><th>{% t "User" %}</th><th>{% t "Location" %}</th><th>{% t "Status" %}</th><th></th></tr></thead>
+                <tbody>
+                {% for o in queue %}
+                    <tr>
+                        <td><span class="kind-chip {{ o.kind }}">{% t o.kind_label %}</span> {% t o.title %}</td>
+                        <td class="fw-semibold">#{{ o.id }}</td>
+                        <td>{{ o.user.username }}</td>
+                        <td class="small">{{ o.area }}{% if o.city %}, {{ o.city }}{% endif %}</td>
+                        <td>{% include 'partials/badge.html' with s=o.status %}</td>
+                        <td class="text-end"><a href="{{ o.get_absolute_url }}" class="btn btn-sm btn-brand">{% if o.status == 'pending' %}{% t "Review" %}{% else %}{% t "Verify" %}{% endif %}</a></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-check2-all"></i> {% t "All caught up. Nothing is waiting." %}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="card-x p-4 mb-4">
@@ -73,7 +102,7 @@
                 <tbody>
                 {% for c in recent %}
                     <tr>
-                        <td><a href="{% url 'complaint_detail' c.pk %}" class="fw-semibold">#{{ c.id }}</a></td>
+                        <td><a href="{{ c.get_absolute_url }}" class="fw-semibold">#{{ c.id }}</a></td>
                         <td>{{ c.user.username }}</td>
                         <td>{% t c.get_category_display %}</td>
                         <td>{{ c.area }}</td>

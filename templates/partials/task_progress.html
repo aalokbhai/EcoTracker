@@ -1,0 +1,32 @@
+{% load eco_tags %}
+<div class="card-x p-4 mb-3">
+    <h6 class="fw-bold mb-4">{% t "Progress" %}</h6>
+    <ul class="timeline">
+        {% for s in obj.progress_steps %}
+        <li class="tl-item {{ s.state }}">
+            <span class="tl-dot"><i class="bi {{ s.icon }}"></i></span>
+            <div>
+                <strong>{% t s.label %}</strong>
+                {% if forloop.first %}<div class="text-muted small">{{ obj.created_at|date:"d M, h:i A" }}</div>{% endif %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% if obj.status == 'rejected' %}
+<div class="alert alert-danger shadow-sm">
+    <div class="fw-bold mb-1"><i class="bi bi-x-octagon-fill me-1"></i> {% t "Rejected by MC office" %}</div>
+    <div class="small text-uppercase opacity-75">{% t "Reason" %}</div>
+    <div>{{ obj.rejection_reason }}</div>
+</div>
+{% elif obj.status == 'cancelled' %}
+<div class="alert alert-secondary"><i class="bi bi-x-circle me-1"></i> {% t "This request was cancelled by the citizen." %}</div>
+{% endif %}
+
+{% if obj.status == 'in_progress' and obj.redo_reason %}
+<div class="alert alert-warning shadow-sm">
+    <div class="fw-bold mb-1"><i class="bi bi-arrow-repeat me-1"></i> {% t "Sent back for re-cleaning" %}</div>
+    <div>{{ obj.redo_reason }}</div>
+</div>
+{% endif %}
