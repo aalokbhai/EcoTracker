@@ -1,0 +1,9 @@
+# EcoTrack - Python dependencies
+# NOTE: the Dockerfile installs the small CPU-only PyTorch first, so these two lines are already satisfied there.
+Django>=6.1,<6.2
+Pillow
+torch
+torchvision
+# production server + static files
+gunicorn
+whitenoise

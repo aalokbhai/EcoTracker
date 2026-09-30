@@ -1,3 +1,13 @@
+---
+title: EcoTrack
+emoji: ♻️
+colorFrom: green
+colorTo: blue
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # EcoTrack - Smart Waste Management
 
 Citizens report waste / request pickups -> the **MC (Municipal Corporation) office** reviews them ->
