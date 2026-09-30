@@ -1,9 +1,9 @@
 #!/bin/sh
-# Container entry point: prepare the database, then start gunicorn on the port the platform expects.
+# Start command for Render: prepare the database, then run gunicorn on the port Render gives us.
 set -e
 python manage.py migrate --noinput
 
-# Make sure there is always an MC officer to log in with (first start / fresh disk).
+# Make sure there is always an MC officer to log in with (only if the database has none).
 python manage.py shell -c "
 import os, sys
 from django.contrib.auth.models import User
@@ -17,6 +17,7 @@ else:
     call_command('seed_demo')
 "
 
+# 512 MB RAM on the free plan: one worker, several threads.
 exec gunicorn config.wsgi_prod:application \
-  --bind 0.0.0.0:${PORT:-7860} --workers 2 --threads 4 --timeout 120 \
+  --bind 0.0.0.0:${PORT:-10000} --workers 1 --threads 4 --timeout 120 \
   --access-logfile - --error-logfile -

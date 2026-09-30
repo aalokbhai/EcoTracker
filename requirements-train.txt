@@ -1,0 +1,4 @@
+# Only needed to (re)train the CNN or to re-export it:  pip install -r requirements.txt -r requirements-train.txt
+torch
+torchvision
+onnx

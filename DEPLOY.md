@@ -1,23 +1,43 @@
-# Deploying EcoTrack for free (Hugging Face Spaces, Docker)
+# Deploy EcoTrack for free on Render
 
-Why Spaces: free CPU with 16 GB RAM (PyTorch fits), no 15-minute sleep like Render/Koyeb free tiers
-(a Space only pauses after 48 h without visitors), HTTPS included.
+The CNN runs on **ONNX Runtime** in production (same model, same predictions as PyTorch, but the whole app
+uses ~150 MB RAM instead of 600+ MB), so it fits Render's free 512 MB web service.
 
-1. Create an account at https://huggingface.co and make a token: Settings -> Access Tokens -> *Write*.
-2. **New Space** -> name `ecotrack` -> SDK **Docker** (Blank) -> **Public** -> hardware *CPU basic (free)*.
-3. In the Space: **Settings -> Variables and secrets -> New secret**
-   * `DJANGO_SECRET_KEY` = output of `python -c "import secrets;print(secrets.token_urlsafe(50))"`
-   * optional: `OFFICER_USER` and `OFFICER_PASSWORD` (creates your own MC officer if the database has none)
-4. From the project folder:
-   ```bash
-   git remote add hf https://huggingface.co/spaces/<your-username>/ecotrack
-   git push hf main        # username = your HF username, password = the Write token
-   ```
-5. Watch the **Logs** tab: the first build takes about 4-6 minutes. The app is live at
-   `https://<your-username>-ecotrack.hf.space`
+## 1. Push the code to GitHub
+```bash
+git add . && git commit -m "Add Render deployment" && git push origin main
+```
 
-Notes
-* The disk of a free Space is temporary: data created on the live site resets when the Space restarts.
-  The committed `db.sqlite3` and `media/` are copied in on every start, so the demo data is always there.
-* Open the link once ~5 minutes before the presentation so the Space is awake.
-* Local development is unchanged (`python manage.py runserver` uses `config.settings`).
+## 2. Create the web service  (render.com -> sign up with GitHub -> New + -> **Web Service**)
+Pick the `EcoTracker` repo (use *Web Service*, not *Blueprint*), then:
+
+| Setting | Value |
+|---|---|
+| Language | Python 3 |
+| Branch | main |
+| Build Command | `pip install -r requirements.txt && python manage.py collectstatic --noinput` |
+| Start Command | `sh start.sh` |
+| Instance Type | **Free** |
+| Health Check Path (Advanced) | `/healthz` |
+
+**Environment variables**
+
+| Key | Value |
+|---|---|
+| `PYTHON_VERSION` | `3.12.8` (Django 6.1 needs Python 3.12+, Render's default is older) |
+| `DJANGO_SETTINGS_MODULE` | `config.settings_prod` |
+| `DJANGO_SECRET_KEY` | output of `python -c "import secrets;print(secrets.token_urlsafe(50))"` |
+| `OFFICER_USER` / `OFFICER_PASSWORD` | optional - only used if the database has no MC officer |
+
+Click **Create Web Service**. First build takes ~3-5 minutes. Live at `https://<name>.onrender.com`.
+
+## 3. Keep it awake (free services sleep after 15 idle minutes and take ~1 minute to wake)
+Make a free account on uptimerobot.com -> *Add New Monitor* -> type **HTTP(s)**, URL
+`https://<name>.onrender.com/healthz`, interval 5 minutes. One always-on service uses ~744 of the
+750 free hours per month, so keep this as your only Render service.
+
+## Notes
+* Disk is temporary: data created on the live site is lost on redeploy/restart. The committed `db.sqlite3`
+  and `media/` come back every time, so the demo data is always there.
+* Local development is unchanged: `python manage.py runserver` (uses `config.settings`; falls back to PyTorch
+  if `waste_model.onnx` is missing). Re-create the ONNX file after retraining: `python ml/export_onnx.py`.

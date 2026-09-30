@@ -1,13 +1,3 @@
----
-title: EcoTrack
-emoji: ♻️
-colorFrom: green
-colorTo: blue
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # EcoTrack - Smart Waste Management
 
 Citizens report waste / request pickups -> the **MC (Municipal Corporation) office** reviews them ->
@@ -38,7 +28,7 @@ Google Maps driving directions to that full address.
 ## Setup
 
 ```bash
-pip install django pillow torch torchvision
+pip install -r requirements.txt -r requirements-train.txt   # (torch is only needed for training / local fallback)
 python manage.py migrate            # upgrades the old db.sqlite3 too (old statuses are converted)
 python manage.py create_officer mc_officer StrongPass123 --name "MC Officer" --city Kanpur
 python manage.py runserver
@@ -58,3 +48,8 @@ Run the tests: `python manage.py test complaints`
 * Old pickup statuses: `scheduled` -> `approved`, `completed` -> `resolved`.
 * Old complaints that were "in progress" go back to `approved` so collectors can pick them up.
 * Old records have no city/state/pincode; new requests require them.
+
+
+## Deploy (free)
+
+See [DEPLOY.md](DEPLOY.md) - Render free web service, CNN served with ONNX Runtime (`ml_model/waste_model.onnx`).

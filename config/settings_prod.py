@@ -1,4 +1,4 @@
-"""Production settings (Hugging Face Spaces / any Docker host).
+"""Production settings (Render free web service / any host that runs gunicorn).
 Local development keeps using config.settings - nothing in the normal setup changes.
 
 Environment variables (all optional):
@@ -21,19 +21,20 @@ def _csv(name):
     return [x.strip() for x in os.environ.get(name, '').split(',') if x.strip()]
 
 
-ALLOWED_HOSTS = ['.hf.space', 'localhost', '127.0.0.1', '[::1]'] + _csv('ALLOWED_HOSTS')
-CSRF_TRUSTED_ORIGINS = ['https://*.hf.space', 'https://huggingface.co'] + _csv('CSRF_TRUSTED')
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1', '[::1]'] + _csv('ALLOWED_HOSTS')
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com'] + _csv('CSRF_TRUSTED')
+if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):            # set automatically by Render
+    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
+    CSRF_TRUSTED_ORIGINS.append('https://' + os.environ['RENDER_EXTERNAL_HOSTNAME'])
 
 # The platform terminates HTTPS and forwards the original scheme.
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Hugging Face shows the app inside an iframe on huggingface.co, so cookies must be SameSite=None.
 _secure = os.environ.get('INSECURE_COOKIES') != '1'
 SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = _secure
-SESSION_COOKIE_SAMESITE = CSRF_COOKIE_SAMESITE = 'None' if _secure else 'Lax'
 
 # WhiteNoise serves the static files straight from gunicorn (fast, no nginx needed).
-MIDDLEWARE = [m for m in MIDDLEWARE if m != 'django.middleware.clickjacking.XFrameOptionsMiddleware']
+MIDDLEWARE = list(MIDDLEWARE)
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STORAGES = {
