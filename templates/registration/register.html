@@ -1,30 +1,31 @@
 {% extends 'base.html' %}
-{% block title %}Register{% endblock %}
+{% load eco_tags %}
+{% block title %}{% t "Register" %}{% endblock %}
 
 {% block content %}
 <div class="container auth-wrap">
     <div class="card auth-card w-100" style="max-width: 900px; margin: 0 auto;">
         <div class="row g-0">
             <div class="col-md-5 auth-side d-none d-md-flex">
-                <h3 class="fw-bold mb-3">Join EcoTrack</h3>
-                <p class="opacity-75">Help keep your neighbourhood clean by reporting waste issues in seconds.</p>
+                <h3 class="fw-bold mb-3">{% t "Join EcoTrack" %}</h3>
+                <p class="opacity-75">{% t "Help keep your neighbourhood clean by reporting waste issues in seconds." %}</p>
                 <ul class="p-0 mt-3 mb-0">
-                    <li><i class="bi bi-check-circle-fill"></i> Free to use</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Photo-based reporting</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Real-time status updates</li>
+                    <li><i class="bi bi-check-circle-fill"></i> {% t "Free to use" %}</li>
+                    <li><i class="bi bi-check-circle-fill"></i> {% t "Photo-based reporting" %}</li>
+                    <li><i class="bi bi-check-circle-fill"></i> {% t "Real-time status updates" %}</li>
                 </ul>
             </div>
             <div class="col-md-7 p-4 p-md-5 bg-white">
-                <h3 class="fw-bold mb-1">Create account</h3>
-                <p class="text-muted mb-4">It only takes a minute.</p>
+                <h3 class="fw-bold mb-1">{% t "Create account" %}</h3>
+                <p class="text-muted mb-4">{% t "It only takes a minute." %}</p>
                 <form method="post">
                     {% csrf_token %}
                     {% for field in form %}
                         {% include 'partials/field.html' with field=field %}
                     {% endfor %}
-                    <button class="btn btn-brand w-100 py-2 mt-2">Register</button>
+                    <button class="btn btn-brand w-100 py-2 mt-2">{% t "Register" %}</button>
                 </form>
-                <p class="text-center text-muted mt-4 mb-0">Already have an account? <a href="{% url 'login' %}" class="link-brand">Login</a></p>
+                <p class="text-center text-muted mt-4 mb-0">{% t "Already have an account?" %} <a href="{% url 'login' %}" class="link-brand">{% t "Login" %}</a></p>
             </div>
         </div>
     </div>

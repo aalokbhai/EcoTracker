@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-
+from accounts.i18n import tr
 from .forms import ComplaintForm
 from .models import Complaint
 from .ai import verify_image
@@ -24,7 +24,13 @@ def report_complaint(request):
                 complaint.ai_confidence = confidence
                 complaint.save(update_fields=['ai_verified', 'ai_confidence'])
 
-            messages.success(request, f'Complaint #{complaint.id} submit ho gayi.')
+            messages.success(request, tr('Complaint #{id} submitted successfully.').format(id=complaint.id))
+            if complaint.ai_verified is False:
+                messages.warning(
+                    request,
+                    tr('Our AI could not clearly detect waste in this photo, '
+                       'so the complaint was flagged for manual review.')
+                )
             return redirect('complaint_detail', pk=complaint.pk)
     else:
         form = ComplaintForm()

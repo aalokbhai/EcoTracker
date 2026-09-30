@@ -1,7 +1,8 @@
+{% load eco_tags %}
 {% with n=request.resolver_match.url_name %}
 <ul class="nav nav-pills nav-pills-eco mb-4">
-    <li class="nav-item"><a class="nav-link {% if n == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Overview</a></li>
-    <li class="nav-item"><a class="nav-link {% if n == 'manage_complaints' %}active{% endif %}" href="{% url 'manage_complaints' %}"><i class="bi bi-flag"></i> Complaints</a></li>
-    <li class="nav-item"><a class="nav-link {% if n == 'manage_pickups' %}active{% endif %}" href="{% url 'manage_pickups' %}"><i class="bi bi-truck"></i> Pickups</a></li>
+    <li class="nav-item"><a class="nav-link {% if n == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> {% t "Overview" %}</a></li>
+    <li class="nav-item"><a class="nav-link {% if n == 'manage_complaints' %}active{% endif %}" href="{% url 'manage_complaints' %}"><i class="bi bi-flag"></i> {% t "Complaints" %}</a></li>
+    <li class="nav-item"><a class="nav-link {% if n == 'manage_pickups' %}active{% endif %}" href="{% url 'manage_pickups' %}"><i class="bi bi-truck"></i> {% t "Pickups" %}</a></li>
 </ul>
 {% endwith %}

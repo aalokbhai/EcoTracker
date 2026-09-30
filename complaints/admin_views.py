@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Count
 from django.views.decorators.http import require_POST
-
+from accounts.i18n import tr
 from .models import Complaint
 from pickups.models import PickupRequest
 
@@ -34,7 +34,7 @@ def dashboard(request):
         'stats': stats,
         'area_labels': [a['area'] for a in area_qs],
         'area_counts': [a['count'] for a in area_qs],
-        'cat_labels': [cat_map.get(c['category'], c['category']) for c in cat_qs],
+        'cat_labels': [tr(cat_map.get(c['category'], c['category'])) for c in cat_qs],
         'cat_counts': [c['count'] for c in cat_qs],
         'recent': Complaint.objects.select_related('user')[:5],
     }
@@ -98,5 +98,6 @@ def update_pickup(request, pk):
     if status in dict(PickupRequest.STATUS_CHOICES):
         pickup.status = status
         pickup.save(update_fields=['status'])
-        messages.success(request, f'Pickup #{pickup.id} Updated')
+        messages.success(request, tr('Complaint #{id} updated.').format(id=complaint.id))
+        messages.success(request, tr('Pickup #{id} updated.').format(id=pickup.id))
     return redirect('manage_pickups')

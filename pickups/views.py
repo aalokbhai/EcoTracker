@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from accounts.i18n import tr
 
 from .forms import PickupForm
 from .models import PickupRequest
@@ -15,7 +16,8 @@ def request_pickup(request):
             pickup = form.save(commit=False)
             pickup.user = request.user
             pickup.save()
-            messages.success(request, f'Pickup request #{pickup.id} submit ho gayi.')
+            messages.success(request, tr('Pickup request #{id} submitted successfully.').format(id=pickup.id))
+            messages.info(request, tr('Pickup #{id} cancelled.').format(id=pickup.id))
             return redirect('my_pickups')
     else:
         form = PickupForm()

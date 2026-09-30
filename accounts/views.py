@@ -1,8 +1,13 @@
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login
-from .forms import RegisterForm
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+
 from complaints.models import Complaint
+
+from .forms import RegisterForm
+from .i18n import tr
 
 
 def home(request):
@@ -22,8 +27,18 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, 'Account ban gaya! Welcome.')
+            messages.success(request, tr('Your account has been created. Welcome!'))
             return redirect('home')
     else:
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
+
+
+def set_language(request, code):
+    target = request.META.get('HTTP_REFERER', '')
+    if not url_has_allowed_host_and_scheme(target, allowed_hosts={request.get_host()}):
+        target = reverse('home')
+    response = redirect(target)
+    if code in ('en', 'hi'):
+        response.set_cookie('lang', code, max_age=60 * 60 * 24 * 365, samesite='Lax')
+    return response

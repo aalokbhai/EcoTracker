@@ -1,7 +1,8 @@
-{% if s == 'pending' %}<span class="badge-soft b-warning"><i class="bi bi-hourglass-split"></i> Pending</span>
-{% elif s == 'in_progress' %}<span class="badge-soft b-info"><i class="bi bi-gear-fill"></i> In Progress</span>
-{% elif s == 'resolved' %}<span class="badge-soft b-success"><i class="bi bi-check-circle-fill"></i> Resolved</span>
-{% elif s == 'scheduled' %}<span class="badge-soft b-info"><i class="bi bi-calendar-check"></i> Scheduled</span>
-{% elif s == 'completed' %}<span class="badge-soft b-success"><i class="bi bi-check-circle-fill"></i> Completed</span>
-{% elif s == 'cancelled' %}<span class="badge-soft b-muted"><i class="bi bi-x-circle"></i> Cancelled</span>
+{% load eco_tags %}
+{% if s == 'pending' %}<span class="badge-soft b-warning"><i class="bi bi-hourglass-split"></i> {% t "Pending" %}</span>
+{% elif s == 'in_progress' %}<span class="badge-soft b-info"><i class="bi bi-gear-fill"></i> {% t "In Progress" %}</span>
+{% elif s == 'resolved' %}<span class="badge-soft b-success"><i class="bi bi-check-circle-fill"></i> {% t "Resolved" %}</span>
+{% elif s == 'scheduled' %}<span class="badge-soft b-info"><i class="bi bi-calendar-check"></i> {% t "Scheduled" %}</span>
+{% elif s == 'completed' %}<span class="badge-soft b-success"><i class="bi bi-check-circle-fill"></i> {% t "Completed" %}</span>
+{% elif s == 'cancelled' %}<span class="badge-soft b-muted"><i class="bi bi-x-circle"></i> {% t "Cancelled" %}</span>
 {% endif %}

@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
-{% block title %}Request Pickup{% endblock %}
+{% load eco_tags %}
+{% block title %}{% t "Request Pickup" %}{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="mb-4">
-        <h1 class="page-title">Request a waste pickup</h1>
-        <p class="page-sub mb-0">Choose the waste type, address and a convenient date.</p>
+        <h1 class="page-title">{% t "Request a waste pickup" %}</h1>
+        <p class="page-sub mb-0">{% t "Choose the waste type, address and a convenient date." %}</p>
     </div>
 
     <div class="row g-4">
         <div class="col-lg-7">
             <div class="card-x p-4">
-                <form method="post">
+                <form method="post" data-loading="{% t 'Submitting...' %}">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6">{% include 'partials/field.html' with field=form.waste_type %}</div>
@@ -19,19 +20,19 @@
                     </div>
                     {% include 'partials/field.html' with field=form.address %}
                     {% include 'partials/field.html' with field=form.notes %}
-                    <button class="btn btn-brand btn-lg w-100"><i class="bi bi-truck me-1"></i> Submit request</button>
+                    <button class="btn btn-brand btn-lg w-100"><i class="bi bi-truck me-1"></i> {% t "Submit request" %}</button>
                 </form>
             </div>
         </div>
         <div class="col-lg-5">
             <div class="card-x p-4">
-                <h6 class="fw-bold mb-3">Waste types</h6>
+                <h6 class="fw-bold mb-3">{% t "Waste types" %}</h6>
                 <div class="d-flex flex-column gap-3 small">
-                    <div><span class="badge-soft b-success">Wet</span> <span class="text-muted ms-1">Kitchen scraps, peels, garden waste</span></div>
-                    <div><span class="badge-soft b-info">Dry</span> <span class="text-muted ms-1">Paper, plastic, cardboard, metal</span></div>
-                    <div><span class="badge-soft b-muted">Recyclable</span> <span class="text-muted ms-1">Clean bottles, cans, glass</span></div>
-                    <div><span class="badge-soft b-danger">Hazardous</span> <span class="text-muted ms-1">Batteries, paint, chemicals, medicines</span></div>
-                    <div><span class="badge-soft b-warning">E-Waste</span> <span class="text-muted ms-1">Phones, chargers, old electronics</span></div>
+                    <div><span class="badge-soft b-success">{% t "Wet Waste" %}</span> <span class="text-muted ms-1">{% t "Kitchen scraps, peels, garden waste" %}</span></div>
+                    <div><span class="badge-soft b-info">{% t "Dry Waste" %}</span> <span class="text-muted ms-1">{% t "Paper, plastic, cardboard, metal" %}</span></div>
+                    <div><span class="badge-soft b-muted">{% t "Recyclable" %}</span> <span class="text-muted ms-1">{% t "Clean bottles, cans, glass" %}</span></div>
+                    <div><span class="badge-soft b-danger">{% t "Hazardous" %}</span> <span class="text-muted ms-1">{% t "Batteries, paint, chemicals, medicines" %}</span></div>
+                    <div><span class="badge-soft b-warning">{% t "E-Waste" %}</span> <span class="text-muted ms-1">{% t "Phones, chargers, old electronics" %}</span></div>
                 </div>
             </div>
         </div>

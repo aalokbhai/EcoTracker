@@ -1,44 +1,45 @@
 {% extends 'base.html' %}
-{% block title %}Admin Dashboard{% endblock %}
+{% load eco_tags %}
+{% block title %}{% t "Admin Dashboard" %}{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="mb-3">
-        <h1 class="page-title">Admin dashboard</h1>
-        <p class="page-sub">Overview of complaints, hotspots and pickup requests.</p>
+        <h1 class="page-title">{% t "Admin Dashboard" %}</h1>
+        <p class="page-sub">{% t "Overview of complaints, hotspots and pickup requests." %}</p>
     </div>
     {% include 'partials/manage_tabs.html' %}
 
     <div class="row g-3 mb-4">
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-slate"><i class="bi bi-flag-fill"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.total }}">0</div><div class="stat-label">Total</div></div>
+            <div><div class="stat-num" data-count="{{ stats.total }}">0</div><div class="stat-label">{% t "Total" %}</div></div>
         </div></div>
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-amber"><i class="bi bi-hourglass-split"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.pending }}">0</div><div class="stat-label">Pending</div></div>
+            <div><div class="stat-num" data-count="{{ stats.pending }}">0</div><div class="stat-label">{% t "Pending" %}</div></div>
         </div></div>
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-blue"><i class="bi bi-gear-fill"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.in_progress }}">0</div><div class="stat-label">In progress</div></div>
+            <div><div class="stat-num" data-count="{{ stats.in_progress }}">0</div><div class="stat-label">{% t "In Progress" %}</div></div>
         </div></div>
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-green"><i class="bi bi-check-circle-fill"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.resolved }}">0</div><div class="stat-label">Resolved</div></div>
+            <div><div class="stat-num" data-count="{{ stats.resolved }}">0</div><div class="stat-label">{% t "Resolved" %}</div></div>
         </div></div>
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-red"><i class="bi bi-exclamation-triangle-fill"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.review }}">0</div><div class="stat-label">AI flagged</div></div>
+            <div><div class="stat-num" data-count="{{ stats.review }}">0</div><div class="stat-label">{% t "AI flagged" %}</div></div>
         </div></div>
         <div class="col-6 col-lg-4 col-xl-2"><div class="card-x stat-card">
             <div class="stat-icon ic-violet"><i class="bi bi-truck"></i></div>
-            <div><div class="stat-num" data-count="{{ stats.pickups }}">0</div><div class="stat-label">Open pickups</div></div>
+            <div><div class="stat-num" data-count="{{ stats.pickups }}">0</div><div class="stat-label">{% t "Open pickups" %}</div></div>
         </div></div>
     </div>
 
     <div class="card-x p-4 mb-4">
         <div class="d-flex justify-content-between mb-2">
-            <span class="fw-semibold">Resolution rate</span>
+            <span class="fw-semibold">{% t "Resolution rate" %}</span>
             <span class="fw-bold text-brand">{{ stats.rate }}%</span>
         </div>
         <div class="progress" style="height: 10px;">
@@ -49,13 +50,13 @@
     <div class="row g-4 mb-4">
         <div class="col-lg-8">
             <div class="card-x p-4 h-100">
-                <h5 class="fw-bold mb-3"><i class="bi bi-fire text-danger"></i> Waste hotspots</h5>
+                <h5 class="fw-bold mb-3"><i class="bi bi-fire text-danger"></i> {% t "Waste hotspots" %}</h5>
                 <canvas id="areaChart" height="120"></canvas>
             </div>
         </div>
         <div class="col-lg-4">
             <div class="card-x p-4 h-100">
-                <h5 class="fw-bold mb-3">By category</h5>
+                <h5 class="fw-bold mb-3">{% t "By category" %}</h5>
                 <canvas id="catChart"></canvas>
             </div>
         </div>
@@ -63,23 +64,23 @@
 
     <div class="card-x overflow-hidden">
         <div class="p-4 pb-2 d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0">Recent complaints</h5>
-            <a href="{% url 'manage_complaints' %}" class="link-brand small">View all <i class="bi bi-arrow-right"></i></a>
+            <h5 class="fw-bold mb-0">{% t "Recent complaints" %}</h5>
+            <a href="{% url 'manage_complaints' %}" class="link-brand small">{% t "View all" %} <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="table-responsive">
             <table class="table table-eco">
-                <thead><tr><th>ID</th><th>User</th><th>Category</th><th>Area</th><th>Status</th></tr></thead>
+                <thead><tr><th>{% t "ID" %}</th><th>{% t "User" %}</th><th>{% t "Category" %}</th><th>{% t "Area" %}</th><th>{% t "Status" %}</th></tr></thead>
                 <tbody>
                 {% for c in recent %}
                     <tr>
                         <td><a href="{% url 'complaint_detail' c.pk %}" class="fw-semibold">#{{ c.id }}</a></td>
                         <td>{{ c.user.username }}</td>
-                        <td>{{ c.get_category_display }}</td>
+                        <td>{% t c.get_category_display %}</td>
                         <td>{{ c.area }}</td>
                         <td>{% include 'partials/badge.html' with s=c.status %}</td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="5" class="text-center text-muted py-4">No complaints yet.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted py-4">{% t "No complaints yet" %}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>
@@ -97,13 +98,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
 const read = id => JSON.parse(document.getElementById(id).textContent);
-Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.family = "'Inter', 'Noto Sans Devanagari', sans-serif";
 
 new Chart(document.getElementById('areaChart'), {
     type: 'bar',
     data: {
         labels: read('area-labels'),
-        datasets: [{ label: 'Complaints', data: read('area-counts'), backgroundColor: '#10b981', borderRadius: 8 }]
+        datasets: [{ label: '{% t "Complaints" %}', data: read('area-counts'), backgroundColor: '#10b981', borderRadius: 8 }]
     },
     options: {
         plugins: { legend: { display: false } },
