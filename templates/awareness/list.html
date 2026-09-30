@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Waste Awareness{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <div class="eyebrow">Learn</div>
+        <h1 class="page-title">Waste awareness</h1>
+        <p class="page-sub">Small habits make a big difference. Learn how to handle waste the right way.</p>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+        <a href="{% url 'awareness' %}" class="btn btn-sm {% if not current %}btn-brand{% else %}btn-outline-brand{% endif %}">All</a>
+        {% for value, label in categories %}
+        <a href="?category={{ value }}" class="btn btn-sm {% if current == value %}btn-brand{% else %}btn-outline-brand{% endif %}">{{ label }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        {% for a in articles %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card-x lift p-4 h-100">
+                <div class="stat-icon {% if a.category == 'segregation' %}ic-green{% elif a.category == 'recycling' %}ic-blue{% elif a.category == 'hazardous' %}ic-red{% else %}ic-amber{% endif %} mb-3">
+                    <i class="bi {% if a.category == 'segregation' %}bi-diagram-3{% elif a.category == 'recycling' %}bi-recycle{% elif a.category == 'hazardous' %}bi-exclamation-triangle{% else %}bi-lightbulb{% endif %}"></i>
+                </div>
+                <span class="badge-soft b-muted mb-2">{{ a.get_category_display }}</span>
+                <h5 class="fw-bold">{{ a.title }}</h5>
+                <div class="text-muted small">{{ a.content|linebreaks }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12"><div class="card-x empty-state"><i class="bi bi-journal-text"></i><p class="mt-2 mb-0">No articles available yet.</p></div></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

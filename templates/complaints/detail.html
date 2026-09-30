@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Complaint #{{ complaint.id }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <a href="{% url 'my_complaints' %}" class="link-brand small"><i class="bi bi-arrow-left"></i> Back to complaints</a>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mt-2 mb-4 gap-2">
+        <h1 class="page-title mb-0">Complaint #{{ complaint.id }}</h1>
+        {% include 'partials/badge.html' with s=complaint.status %}
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card-x p-4">
+                {% if complaint.image %}
+                    <img src="{{ complaint.image.url }}" class="detail-img mb-3" alt="Complaint photo">
+                {% endif %}
+                <div class="detail-row"><div class="k">Category</div><div class="fw-semibold">{{ complaint.get_category_display }}</div></div>
+                <div class="detail-row"><div class="k">Area</div><div>{{ complaint.area }}</div></div>
+                {% if complaint.address %}<div class="detail-row"><div class="k">Address</div><div>{{ complaint.address }}</div></div>{% endif %}
+                <div class="detail-row"><div class="k">Description</div><div>{{ complaint.description }}</div></div>
+                <div class="detail-row"><div class="k">Reported on</div><div>{{ complaint.created_at|date:"d M Y, h:i A" }}</div></div>
+                <div class="detail-row"><div class="k">Reported by</div><div>{{ complaint.user.username }}</div></div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card-x p-4 mb-3">
+                <h6 class="fw-bold mb-4">Progress</h6>
+                <ul class="timeline">
+                    <li class="tl-item done">
+                        <span class="tl-dot"><i class="bi bi-send"></i></span>
+                        <div><strong>Submitted</strong><div class="text-muted small">{{ complaint.created_at|date:"d M, h:i A" }}</div></div>
+                    </li>
+                    <li class="tl-item {% if complaint.status == 'in_progress' %}active{% elif complaint.status == 'resolved' %}done{% endif %}">
+                        <span class="tl-dot"><i class="bi bi-gear"></i></span>
+                        <div><strong>In Progress</strong><div class="text-muted small">The team is working on it</div></div>
+                    </li>
+                    <li class="tl-item {% if complaint.status == 'resolved' %}done{% endif %}">
+                        <span class="tl-dot"><i class="bi bi-check2-circle"></i></span>
+                        <div><strong>Resolved</strong>{% if complaint.status == 'resolved' %}<div class="text-muted small">{{ complaint.updated_at|date:"d M, h:i A" }}</div>{% endif %}</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-x p-4 mb-3">
+                <h6 class="fw-bold">AI verification</h6>
+                {% include 'partials/ai_badge.html' with c=complaint %}
+                {% if complaint.ai_confidence is not None %}
+                    <div class="small text-muted mt-2">Confidence: {{ complaint.ai_confidence|floatformat:1 }}%</div>
+                {% endif %}
+            </div>
+
+            {% if complaint.admin_remark %}
+            <div class="card-x p-4">
+                <h6 class="fw-bold"><i class="bi bi-chat-left-text me-1"></i> Admin remark</h6>
+                <p class="mb-0 text-muted">{{ complaint.admin_remark }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

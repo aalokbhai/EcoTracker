@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Report an Issue{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h1 class="page-title">Report a waste issue</h1>
+        <p class="page-sub mb-0">Add a clear photo and the exact area so the team can act quickly.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card-x p-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">{% include 'partials/field.html' with field=form.category %}</div>
+                        <div class="col-md-6">{% include 'partials/field.html' with field=form.area %}</div>
+                    </div>
+                    {% include 'partials/field.html' with field=form.address %}
+                    {% include 'partials/field.html' with field=form.description %}
+
+                    <label class="form-label fw-semibold">Photo of the issue</label>
+                    <div class="dropzone mb-2">
+                        {{ form.image }}
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <div class="fw-semibold" id="dropLabel">Click or drag a photo here</div>
+                        <div class="small text-muted">JPG or PNG. The photo must clearly show the waste.</div>
+                        <img id="imagePreview" class="d-none" alt="Preview">
+                    </div>
+                    {% for e in form.image.errors %}
+                        <div class="text-danger small mb-2"><i class="bi bi-exclamation-circle"></i> {{ e }}</div>
+                    {% endfor %}
+
+                    <button class="btn btn-brand btn-lg w-100 mt-3"><i class="bi bi-send me-1"></i> Submit complaint</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card-x p-4 mb-3">
+                <h6 class="fw-bold"><i class="bi bi-lightbulb text-warning me-1"></i> Tips for a good report</h6>
+                <ul class="text-muted small ps-3 mb-0">
+                    <li class="mb-2">Take the photo in daylight and get close to the waste.</li>
+                    <li class="mb-2">Mention the exact area and a nearby landmark.</li>
+                    <li>Describe how long the problem has existed.</li>
+                </ul>
+            </div>
+            <div class="card-x p-4">
+                <h6 class="fw-bold"><i class="bi bi-cpu text-success me-1"></i> AI verification</h6>
+                <p class="text-muted small mb-0">Every photo is checked by our AI model. If it does not look like waste, the complaint is flagged for manual review.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

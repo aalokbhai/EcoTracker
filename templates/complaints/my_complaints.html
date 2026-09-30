@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}My Complaints{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h1 class="page-title">My complaints</h1>
+            <p class="page-sub mb-0">Track the progress of everything you have reported.</p>
+        </div>
+        <a href="{% url 'report_complaint' %}" class="btn btn-brand"><i class="bi bi-plus-lg me-1"></i> New complaint</a>
+    </div>
+
+    <div class="card-x overflow-hidden">
+        {% if complaints %}
+        <div class="table-responsive">
+            <table class="table table-eco">
+                <thead>
+                    <tr><th>Photo</th><th>ID</th><th>Category</th><th>Area</th><th>Status</th><th>AI check</th><th>Date</th><th></th></tr>
+                </thead>
+                <tbody>
+                {% for c in complaints %}
+                    <tr>
+                        <td>{% if c.image %}<img src="{{ c.image.url }}" class="thumb" alt="">{% endif %}</td>
+                        <td class="fw-semibold">#{{ c.id }}</td>
+                        <td>{{ c.get_category_display }}</td>
+                        <td>{{ c.area }}</td>
+                        <td>{% include 'partials/badge.html' with s=c.status %}</td>
+                        <td>{% include 'partials/ai_badge.html' with c=c %}</td>
+                        <td class="text-muted small">{{ c.created_at|date:"d M Y, h:i A" }}</td>
+                        <td class="text-end"><a href="{% url 'complaint_detail' c.pk %}" class="btn btn-sm btn-outline-brand">Track</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h5 class="mt-3 text-dark">No complaints yet</h5>
+            <p>When you report an issue, it will appear here.</p>
+            <a href="{% url 'report_complaint' %}" class="btn btn-brand">Report your first issue</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

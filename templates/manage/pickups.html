@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Manage Pickups{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-3">
+        <h1 class="page-title">Manage pickup requests</h1>
+        <p class="page-sub">Schedule and complete waste pickups.</p>
+    </div>
+    {% include 'partials/manage_tabs.html' %}
+
+    <div class="card-x overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-eco">
+                <thead><tr><th>ID</th><th>User</th><th>Waste type</th><th>Address</th><th>Date</th><th>Status</th><th style="min-width:230px">Update</th></tr></thead>
+                <tbody>
+                {% for p in pickups %}
+                    <tr>
+                        <td class="fw-semibold">#{{ p.id }}</td>
+                        <td>{{ p.user.username }}</td>
+                        <td>{{ p.get_waste_type_display }}</td>
+                        <td>{{ p.address }}</td>
+                        <td>{{ p.preferred_date|date:"d M Y" }}</td>
+                        <td>{% include 'partials/badge.html' with s=p.status %}</td>
+                        <td>
+                            <form method="post" action="{% url 'update_pickup' p.pk %}" class="d-flex gap-1">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm" style="width:140px">
+                                    {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if p.status == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-sm btn-brand">Save</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7"><div class="empty-state"><i class="bi bi-truck"></i><p class="mt-2 mb-0">No pickup requests yet.</p></div></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

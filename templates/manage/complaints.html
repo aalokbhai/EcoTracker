@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Manage Complaints{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-3">
+        <h1 class="page-title">Manage complaints</h1>
+        <p class="page-sub">Filter, review and update the status of every complaint.</p>
+    </div>
+    {% include 'partials/manage_tabs.html' %}
+
+    <form method="get" class="card-x p-3 mb-4">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">All statuses</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if f.status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="category" class="form-select">
+                    <option value="">All categories</option>
+                    {% for value, label in category_choices %}
+                    <option value="{{ value }}" {% if f.category == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="area" value="{{ f.area }}" class="form-control" placeholder="Search by area">
+            </div>
+            <div class="col-md-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="review" value="1" id="rv" {% if f.review == '1' %}checked{% endif %}>
+                    <label class="form-check-label" for="rv">AI flagged only</label>
+                </div>
+            </div>
+            <div class="col-md-1"><button class="btn btn-brand w-100"><i class="bi bi-funnel"></i></button></div>
+        </div>
+    </form>
+
+    <div class="card-x overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-eco">
+                <thead>
+                    <tr><th>Photo</th><th>ID</th><th>User</th><th>Category</th><th>Area</th><th>AI</th><th>Date</th><th style="min-width:340px">Update</th></tr>
+                </thead>
+                <tbody>
+                {% for c in complaints %}
+                    <tr>
+                        <td>{% if c.image %}<a href="{{ c.image.url }}" target="_blank"><img src="{{ c.image.url }}" class="thumb" alt=""></a>{% endif %}</td>
+                        <td><a href="{% url 'complaint_detail' c.pk %}" class="fw-semibold">#{{ c.id }}</a></td>
+                        <td>{{ c.user.username }}</td>
+                        <td>{{ c.get_category_display }}</td>
+                        <td>{{ c.area }}</td>
+                        <td>{% include 'partials/ai_badge.html' with c=c %}</td>
+                        <td class="text-muted small">{{ c.created_at|date:"d M, h:i A" }}</td>
+                        <td>
+                            <form method="post" action="{% url 'update_complaint' c.pk %}" class="d-flex gap-1">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm" style="width:130px">
+                                    {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if c.status == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" name="admin_remark" value="{{ c.admin_remark }}" class="form-control form-control-sm" placeholder="Remark">
+                                <button class="btn btn-sm btn-brand">Save</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8"><div class="empty-state"><i class="bi bi-search"></i><p class="mt-2 mb-0">No complaints match your filters.</p></div></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

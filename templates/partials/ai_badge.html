@@ -1,0 +1,4 @@
+{% if c.ai_verified is None %}<span class="badge-soft b-muted"><i class="bi bi-dash-circle"></i> Not checked</span>
+{% elif c.ai_verified %}<span class="badge-soft b-success"><i class="bi bi-patch-check-fill"></i> AI verified</span>
+{% else %}<span class="badge-soft b-danger"><i class="bi bi-exclamation-triangle-fill"></i> Needs review</span>
+{% endif %}
