@@ -62,9 +62,9 @@ HI = {
     "Resolve": "समाधान",
     "The admin team acts on it and you track the progress live.": "एडमिन टीम कार्रवाई करती है और आप हर कदम देख सकते हैं।",
     "AI photo verification": "AI से फोटो की जाँच",
-    "A CNN model built on MobileNetV2 analyses every uploaded photo and confirms that it really shows waste. This reduces fake and irrelevant reports, and lets the admin team focus on genuine issues.":
-        "MobileNetV2 पर बना CNN मॉडल हर फोटो को जाँचकर पक्का करता है कि उसमें सच में कचरा है। इससे झूठी शिकायतें कम होती हैं और टीम असली समस्याओं पर ध्यान दे पाती है।",
-    "Powered by deep learning": "डीप लर्निंग से संचालित",
+    "Every uploaded photo is analysed by Google's Gemini AI, which confirms that it really shows waste and gives a confidence score. This reduces fake and irrelevant reports, and lets the admin team focus on genuine issues.":
+        "हर फोटो को Google का Gemini AI जाँचता है और पक्का करता है कि उसमें सच में कचरा है, साथ ही भरोसे का स्कोर भी देता है। इससे झूठी शिकायतें कम होती हैं और टीम असली समस्याओं पर ध्यान दे पाती है।",
+    "Powered by Gemini AI": "Gemini AI से संचालित",
     "Ready to make a difference?": "बदलाव लाने के लिए तैयार हैं?",
     "Create a free account and report your first issue in under a minute.":
         "मुफ़्त खाता बनाएं और एक मिनट में अपनी पहली शिकायत दर्ज करें।",
@@ -133,6 +133,7 @@ HI = {
     "Submitted": "दर्ज हुई",
     "The team is working on it": "टीम इस पर काम कर रही है",
     "Waste probability": "कचरा होने की संभावना",
+    "AI confidence": "AI का भरोसा",
     "Admin remark": "एडमिन की टिप्पणी",
     "Not checked": "जाँच नहीं हुई",
     "AI verified": "AI ने सही पाया",

@@ -1,7 +1,7 @@
-# EcoTrack - runtime dependencies (production uses ONNX Runtime, so PyTorch is NOT needed on the server)
+# EcoTrack - runtime dependencies. The AI photo check calls the Gemini API over HTTPS,
+# so no PyTorch / ONNX / numpy is needed any more.
 Django>=6.1,<6.2
 Pillow
-numpy
-onnxruntime
 gunicorn
 whitenoise
+python-dotenv

@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from accounts.i18n import tr
 from accounts.roles import citizen_required
 
-from .ai import verify_image
+from .ai import analyze_image
 from .forms import ComplaintForm
 from .models import Complaint
 from .task_views import build_task_context, load_task
@@ -20,12 +20,14 @@ def report_complaint(request):
             complaint.user = request.user
             complaint.save()
 
-            # CNN verification
+            # AI photo check (Gemini). If the AI is unavailable the complaint is still saved as "not checked".
             if complaint.image:
-                verified, confidence = verify_image(complaint.image.path)
-                complaint.ai_verified = verified
-                complaint.ai_confidence = confidence
-                complaint.save(update_fields=['ai_verified', 'ai_confidence'])
+                result = analyze_image(complaint.image.path)
+                if result:
+                    complaint.ai_verified = result.verified
+                    complaint.ai_confidence = result.percent
+                    complaint.ai_reason = result.reason
+                    complaint.save(update_fields=['ai_verified', 'ai_confidence', 'ai_reason'])
 
             messages.success(request, tr('Complaint #{id} submitted successfully.').format(id=complaint.id))
             messages.info(request, tr('The MC office will review your complaint shortly.'))

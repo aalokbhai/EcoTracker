@@ -28,16 +28,32 @@ Google Maps driving directions to that full address.
 ## Setup
 
 ```bash
-pip install -r requirements.txt -r requirements-train.txt   # (torch is only needed for training / local fallback)
+pip install -r requirements.txt
 python manage.py migrate            # upgrades the old db.sqlite3 too (old statuses are converted)
 python manage.py create_officer mc_officer StrongPass123 --name "MC Officer" --city Kanpur
 python manage.py runserver
 ```
 
-Quick demo data (one officer, two collectors, one citizen - password `Eco@12345`):
+### AI photo check (Gemini API, free)
+
+Every complaint photo is checked by Google's Gemini API, which says whether the photo really shows waste, gives a **confidence %** and a one-line reason. The MC officer sees this on every complaint.
+
+1. Get a free key (no credit card): <https://aistudio.google.com> -> **Get API key**
+2. Copy `.env.example` to `.env` and paste the key: `GEMINI_API_KEY=your_key`  (the `.env` file is git-ignored)
+3. Restart the server.
+
+If the key is missing or the internet is down, nothing breaks: the complaint is saved and shows **Not checked** for manual review. Set `AI_CHECK=off` to switch the AI check off.
+
+Quick demo accounts (one officer, two collectors, one citizen - password `Eco@12345`):
 
 ```bash
 python manage.py seed_demo
+```
+
+Wipe all complaints/pickups and fill the site with realistic dummy data:
+
+```bash
+python manage.py seed_complaints
 ```
 
 Run the tests: `python manage.py test complaints`
@@ -52,4 +68,4 @@ Run the tests: `python manage.py test complaints`
 
 ## Deploy (free)
 
-See [DEPLOY.md](DEPLOY.md) - Render free web service, CNN served with ONNX Runtime (`ml_model/waste_model.onnx`).
+See [DEPLOY.md](DEPLOY.md) - Render free web service (the AI check calls the Gemini API, so the server stays small).

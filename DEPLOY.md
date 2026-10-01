@@ -1,7 +1,7 @@
 # Deploy EcoTrack for free on Render
 
-The CNN runs on **ONNX Runtime** in production (same model, same predictions as PyTorch, but the whole app
-uses ~150 MB RAM instead of 600+ MB), so it fits Render's free 512 MB web service.
+The AI photo check calls the **Google Gemini API**, so the server stays tiny (no PyTorch) and fits Render's
+free 512 MB web service easily.
 
 ## 1. Push the code to GitHub
 ```bash
@@ -27,6 +27,7 @@ Pick the `EcoTracker` repo (use *Web Service*, not *Blueprint*), then:
 | `PYTHON_VERSION` | `3.12.8` (Django 6.1 needs Python 3.12+, Render's default is older) |
 | `DJANGO_SETTINGS_MODULE` | `config.settings_prod` |
 | `DJANGO_SECRET_KEY` | output of `python -c "import secrets;print(secrets.token_urlsafe(50))"` |
+| `GEMINI_API_KEY` | your free key from aistudio.google.com (**never** commit it to GitHub - `.env` is in `.gitignore`) |
 | `OFFICER_USER` / `OFFICER_PASSWORD` | optional - only used if the database has no MC officer |
 
 Click **Create Web Service**. First build takes ~3-5 minutes. Live at `https://<name>.onrender.com`.
@@ -39,5 +40,7 @@ Make a free account on uptimerobot.com -> *Add New Monitor* -> type **HTTP(s)**,
 ## Notes
 * Disk is temporary: data created on the live site is lost on redeploy/restart. The committed `db.sqlite3`
   and `media/` come back every time, so the demo data is always there.
-* Local development is unchanged: `python manage.py runserver` (uses `config.settings`; falls back to PyTorch
-  if `waste_model.onnx` is missing). Re-create the ONNX file after retraining: `python ml/export_onnx.py`.
+* Free Gemini keys have a small daily quota per model. `complaints/ai.py` tries several models in order and,
+  if none can answer, the complaint is still saved as "Not checked" for the MC office. Check your quota at
+  https://aistudio.google.com/rate-limit before the demo.
+* Local development is unchanged: `python manage.py runserver` (uses `config.settings` and your `.env`).

@@ -22,9 +22,10 @@ class Complaint(WorkflowBase):
     address = models.CharField(max_length=255, blank=True)
     image = models.ImageField(upload_to='complaints/', blank=True, null=True)
 
-    # CNN result
+    # AI photo check (Gemini): verdict, confidence (% chance that waste is visible) and a short reason
     ai_verified = models.BooleanField(null=True, blank=True)
     ai_confidence = models.FloatField(null=True, blank=True)
+    ai_reason = models.CharField(max_length=300, blank=True)
 
     admin_remark = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
