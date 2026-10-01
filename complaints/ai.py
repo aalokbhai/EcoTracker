@@ -17,6 +17,9 @@ nothing breaks: the complaint is saved normally and simply shows "Not checked" f
 
 Environment variables
     GEMINI_API_KEY   (required) free key from https://aistudio.google.com  ->  "Get API key"
+    GEMINI_API_KEYS  (optional) extra back-up keys, comma separated. When one key is over its free quota
+                     (HTTP 429) the next key is used. IMPORTANT: Google counts the quota per PROJECT, so a back-up
+                     key only helps if it comes from a different Google project / account.
     GEMINI_MODEL     (optional) model to try first (see DEFAULT_MODELS for the normal order)
     AI_CHECK         (optional) set to "off" to switch the AI check off completely
 
@@ -45,6 +48,7 @@ API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/{model}:gener
 DEFAULT_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.5-flash',
                   'gemini-3.8-flash', 'gemini-flash-latest']
 _working_model = None   # remembered after the first successful call, so it is tried first next time
+_working_key = None
 THRESHOLD = 50.0        # waste chance at or above this percentage = "AI verified"
 MAX_SIDE = 1024         # photos are shrunk to this size first (faster, smaller upload)
 TIMEOUT = 15            # seconds to wait for ONE Gemini call
@@ -79,8 +83,21 @@ class _ApiError(Exception):
 
 
 # ---------------------------------------------------------------- helpers
+def _api_keys():
+    """All configured keys (main key first, then the back-ups), without duplicates."""
+    raw = [os.environ.get('GEMINI_API_KEY', '')] + os.environ.get('GEMINI_API_KEYS', '').replace(';', ',').split(',')
+    keys = []
+    for k in (x.strip() for x in raw):
+        if k and k not in keys:
+            keys.append(k)
+    if _working_key in keys:                       # the key that worked last time goes first
+        keys.remove(_working_key)
+        keys.insert(0, _working_key)
+    return keys
+
+
 def is_configured():
-    return os.environ.get('AI_CHECK', 'on').lower() != 'off' and bool(os.environ.get('GEMINI_API_KEY'))
+    return os.environ.get('AI_CHECK', 'on').lower() != 'off' and bool(_api_keys())
 
 
 def _prompt(lang):
@@ -218,11 +235,11 @@ def _generate(image_bytes, lang, model, api_key, timeout):
 
 def analyze_image(image_path) -> Optional[AIResult]:
     """Ask Gemini whether the photo shows waste. Returns None when the check could not be done."""
-    global _working_model
+    global _working_model, _working_key
     if os.environ.get('AI_CHECK', 'on').lower() == 'off':
         return None
-    api_key = os.environ.get('GEMINI_API_KEY')
-    if not api_key:
+    keys = _api_keys()
+    if not keys:
         logger.warning('GEMINI_API_KEY is not set - AI photo check skipped')
         return None
 
@@ -231,38 +248,45 @@ def analyze_image(image_path) -> Optional[AIResult]:
         lang = translation.get_language()
         started = time.monotonic()
         deadline = started + TOTAL_BUDGET
-        for round_no in (1, 2):                      # second pass only if every model was busy in the first
+        dead_keys = set()                            # keys Google rejected (wrong / disabled key)
+        for round_no in (1, 2):                      # second pass only if everything was busy in the first
             any_busy = False
             for model in _candidate_models():
-                left = deadline - time.monotonic()
-                if left <= 1:
-                    break
-                try:
-                    data = _generate(image_bytes, lang, model, api_key, min(TIMEOUT, left))
-                except _ModelNotFound:
-                    logger.warning('Gemini model "%s" does not exist (any more) - skipped', model)
-                    if model == _working_model:
-                        _working_model = None
-                    continue
-                except _ModelBusy as exc:
-                    any_busy = True
-                    logger.warning('Gemini model "%s" is busy or over its free quota (%s) - trying the next one',
-                                   model, str(exc)[:120].replace('\n', ' '))
-                    continue
-                except _ApiError as exc:
-                    logger.warning('Gemini model "%s" failed: %s', model, str(exc)[:200].replace('\n', ' '))
-                    continue
-                _working_model = model
-                result = _parse(data)
-                logger.info('Gemini (%s) answered in %.1fs: %s%% waste', model,
-                            time.monotonic() - started, result.percent)
-                return result
+                for key in keys:
+                    if key in dead_keys:
+                        continue
+                    left = deadline - time.monotonic()
+                    if left <= 1:
+                        break
+                    tag = f'{model} / key #{keys.index(key) + 1}'          # never log the key itself
+                    try:
+                        data = _generate(image_bytes, lang, model, key, min(TIMEOUT, left))
+                    except _ModelNotFound:
+                        logger.warning('Gemini model "%s" does not exist (any more) - skipped', model)
+                        if model == _working_model:
+                            _working_model = None
+                        break                         # no point trying the other keys on a model that is gone
+                    except _ModelBusy as exc:
+                        any_busy = True
+                        logger.warning('Gemini %s is busy or over its free quota (%s) - trying the next one',
+                                       tag, str(exc)[:120].replace('\n', ' '))
+                        continue
+                    except _ApiError as exc:
+                        if 'HTTP 40' in str(exc):                            # 401 / 403: this key is not accepted
+                            dead_keys.add(key)
+                        logger.warning('Gemini %s failed: %s', tag, str(exc)[:200].replace('\n', ' '))
+                        continue
+                    _working_model, _working_key = model, key
+                    result = _parse(data)
+                    logger.info('Gemini (%s) answered in %.1fs: %s%% waste', tag,
+                                time.monotonic() - started, result.percent)
+                    return result
             if not any_busy or time.monotonic() > deadline - 3:
                 break
             time.sleep(1.5)
-        logger.error('No Gemini model could answer right now (tried %s). The complaint is saved as "Not checked". '
-                     'Check the key and the free-tier quota at https://aistudio.google.com/rate-limit',
-                     _candidate_models())
+        logger.error('No Gemini model could answer right now (tried %s with %d key(s)). The complaint is saved as '
+                     '"Not checked". Check the keys and the free-tier quota at https://aistudio.google.com/rate-limit',
+                     _candidate_models(), len(keys))
         return None
     except _NetworkDown as exc:
         logger.warning('Gemini unreachable (no internet?): %s - AI check skipped', exc)

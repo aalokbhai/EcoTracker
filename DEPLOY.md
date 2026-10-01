@@ -28,6 +28,7 @@ Pick the `EcoTracker` repo (use *Web Service*, not *Blueprint*), then:
 | `DJANGO_SETTINGS_MODULE` | `config.settings_prod` |
 | `DJANGO_SECRET_KEY` | output of `python -c "import secrets;print(secrets.token_urlsafe(50))"` |
 | `GEMINI_API_KEY` | your free key from aistudio.google.com (**never** commit it to GitHub - `.env` is in `.gitignore`) |
+| `GEMINI_API_KEYS` | optional back-up keys, comma separated (used automatically when the first key is over its quota) |
 | `OFFICER_USER` / `OFFICER_PASSWORD` | optional - only used if the database has no MC officer |
 
 Click **Create Web Service**. First build takes ~3-5 minutes. Live at `https://<name>.onrender.com`.
